@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slots - 67 Casino</title>
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="description" content="Slots game at 67 Casino">
+    <font name="inter" src="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2" />
+    <style>
+        body { 
+            font-inter 
+            bg-[#0a0a0a] 
+            text-white 
+            m-0 
+            p-0 
+            min-h-screen
+        }
+    </style>
+    <script>
+    local balance = gurt.crumbs.get("balance")
+    if balance == nil then
+        gurt.crumbs.set({
+            name = "balance",
+            value = 100
+        })
+        balance = 100
+    end
+    local element = gurt.select('#wallet-balance')
+    element.text = balance
+    </script>
+    <script>
+    -- Navigation event handlers
+    local navHome = gurt.select('#nav-home')
+    local navSlots = gurt.select('#nav-slots')
+    local navBlackjack = gurt.select('#nav-blackjack')
+    local navRoulette = gurt.select('#nav-roulette')
+    local navPoker = gurt.select('#nav-poker')
+    local navDice = gurt.select('#nav-dice')
+    local navCoinflip = gurt.select('#nav-coinflip')
+    
+    navHome:on('click', function() gurt.location.goto('/') end)
+    navSlots:on('click', function() gurt.location.goto('/slots') end)
+    navBlackjack:on('click', function() gurt.location.goto('/blackjack') end)
+    navRoulette:on('click', function() gurt.location.goto('/roulette') end)
+    navPoker:on('click', function() gurt.location.goto('/poker') end)
+    navDice:on('click', function() gurt.location.goto('/dice') end)
+    navCoinflip:on('click', function() gurt.location.goto('/coinflip') end)
+    </script>
+    <script>
+        -- Slots Game Logic
+        local isSpinning = false
+        local reels = {}
+        local spinButton = gurt.select('#spinButton')
+        local result = gurt.select('#result')
+        local winDisplay = gurt.select('#winDisplay')
+        local totalSpins = 0
+        local totalWins = 0
+        local totalLosses = 0
+        local jackpotCount = 0
+        
+        -- Slot symbols with their corresponding values
+        local symbols = {
+            "🍒", -- Cherry
+            "🍋", -- Lemon
+            "🍊", -- Orange
+            "🍇", -- Grapes
+            "🔔", -- Bell
+            "💎", -- Diamond
+            "7️⃣"  -- Seven (Jackpot)
+        }
+
+        -- Function to get random symbol
+        local function getRandomSymbol()
+            -- 7️⃣ is less likely to appear
+            local r = math.random(1, 100)
+            if r <= 5 then
+                return symbols[7] -- 5% chance for Seven (Jackpot)
+            elseif r <= 15 then
+                return symbols[6] -- 10% chance for Diamond
+            elseif r <= 30 then
+                return symbols[5] -- 15% chance for Bell
+            else
+                -- Equal chance for other symbols
+                return symbols[math.random(1, 4)]
+            end
+        end
+
+        local function updateStats()
+            gurt.select('#totalSpins').text = tostring(totalSpins)
+            gurt.select('#totalWins').text = tostring(totalWins)
+            gurt.select('#totalLosses').text = tostring(totalLosses)
+            gurt.select('#jackpotCount').text = tostring(jackpotCount)
+        end
+
+        -- Function to finalize spin result and calculate winnings
+        local function finalizeSpinResult()
+            -- Generate final symbols
+            local finalSymbols = {}
+            for i = 1, 3 do
+                finalSymbols[i] = getRandomSymbol()
+                reels[i].text = finalSymbols[i]
+            end
+            
+            -- Check for wins
+            local winAmount = 0
+            local balance = gurt.crumbs.get("balance")
+            local allSame = (finalSymbols[1] == finalSymbols[2] and finalSymbols[2] == finalSymbols[3])
+            
+            if allSame then
+                -- All three symbols match!
+                if finalSymbols[1] == "7️⃣" then
+                    -- Jackpot! (All 7s)
+                    winAmount = 300
+                    result.text = "🎰 JACKPOT! 🎰"
+                    result.style = "text-3xl font-bold text-[#FFD700] mb-8 mx-auto text-center"
+                    jackpotCount = jackpotCount + 1
+                elseif finalSymbols[1] == "💎" then
+                    -- Diamond line
+                    winAmount = 150
+                    result.text = "💎 BIG WIN! 💎"
+                    result.style = "text-3xl font-bold text-[#3b82f6] mb-8 mx-auto text-center"
+                elseif finalSymbols[1] == "🔔" then
+                    -- Bell line
+                    winAmount = 100
+                    result.text = "🔔 NICE WIN! 🔔"
+                    result.style = "text-3xl font-bold text-[#f59e0b] mb-8 mx-auto text-center"
+                else
+                    -- Other matching symbols
+                    winAmount = 50
+                    result.text = "🎉 YOU WIN! 🎉"
+                    result.style = "text-3xl font-bold text-[#10b981] mb-8 mx-auto text-center"
+                end
+                totalWins = totalWins + 1
+            else
+                -- Two matching symbols?
+                if finalSymbols[1] == finalSymbols[2] or finalSymbols[2] == finalSymbols[3] or finalSymbols[1] == finalSymbols[3] then
+                    winAmount = 10
+                    result.text = "👍 SMALL WIN! 👍"
+                    result.style = "text-3xl font-bold text-[#8b5cf6] mb-8 mx-auto text-center"
+                    totalWins = totalWins + 1
+                else
+                    -- No matches
+                    result.text = "😢 TRY AGAIN! 😢"
+                    result.style = "text-3xl font-bold text-[#C0C0C0] mb-8 mx-auto text-center"
+                    totalLosses = totalLosses + 1
+                end
+            end
+            
+            -- Update balance if there's a win
+            if winAmount > 0 then
+                balance = balance + winAmount
+                gurt.crumbs.set({
+                    name = "balance",
+                    value = balance
+                })
+                
+                -- Show win amount
+                winDisplay.text = "+" .. winAmount .. " chips"
+                winDisplay.style = "text-2xl font-bold text-[#10b981] mb-8 mx-auto text-center"
+                
+                -- Update balance display
+                local walletElement = gurt.select('#wallet-balance')
+                walletElement.text = balance
+            end
+            
+            -- Reset button state
+            spinButton.text = "Spin Again"
+            isSpinning = false
+            
+            -- Update stats
+            updateStats()
+            
+            trace.log("Slot spin result: " .. (winAmount > 0 and "Win " .. winAmount or "Loss"))
+        end
+        
+        -- Function to initialize reels
+        local function initReels()
+            reels = {}
+            for i = 1, 3 do
+                reels[i] = gurt.select('#reel' .. i)
+                reels[i].text = "❓"
+            end
+        end
+        
+        -- Function to spin the reels
+        local function spinReels()
+            if isSpinning then
+                return
+            end
+            
+            isSpinning = true
+            spinButton.text = "Spinning..."
+            result.text = ""
+            winDisplay.text = ""
+            
+            -- Deduct bet amount
+            local balance = gurt.crumbs.get("balance")
+            balance = balance - 25 -- 25 chips to play
+            gurt.crumbs.set({
+                name = "balance",
+                value = balance
+            })
+            
+            -- Update balance display
+            local walletElement = gurt.select('#wallet-balance')
+            walletElement.text = balance
+            
+            -- Animate reels spinning
+            local spinDuration = 2000 -- 2 seconds
+            local spinSteps = 20
+            local spinInterval = spinDuration / spinSteps
+            local currentStep = 0
+            
+            -- Create a simple spinning animation using setInterval
+            local spinTimer = setInterval(function()
+                currentStep = currentStep + 1
+                
+                -- Update each reel with random symbols during spin
+                for i = 1, 3 do
+                    reels[i].text = getRandomSymbol()
+                end
+                
+                -- Stop spinning after duration
+                if currentStep >= spinSteps then
+                    finalizeSpinResult()
+                end
+            end, spinInterval)
+            
+            totalSpins = totalSpins + 1
+            updateStats()
+        end
+        
+        -- Add click event listener to spin button
+        spinButton:on('click', spinReels)
+        
+        -- Initialize math random seed with Time.now() as in coinflip.gurt
+        math.randomseed(Time.now())
+        
+        -- Initialize reels and stats
+        initReels()
+        updateStats()
+        
+        trace.log("Slots game initialized!")
+    </script>
+</head>
+<body>
+    <div style="bg-[#111111] p-4 border-b border-[#333333]">
+        <div style="flex justify-between items-center max-w-6xl mx-auto">
+            <!-- Casino Brand -->
+            <div style="flex items-center">
+                <span style="text-xl font-bold mr-8 text-white">67 Casino</span>
+            </div>
+            
+            <!-- Menu Navigation -->
+            <div style="flex items-center">
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-home">Home</span>
+                <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-slots">Slots</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-blackjack">Blackjack</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-roulette">Roulette</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-poker">Poker</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-dice">Dice</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-coinflip">CoinFlip</span>
+            </div>
+            
+            <!-- Gurt Wallet Balance (Far Right) -->
+            <div style="flex items-center ml-8">
+                <div style="bg-[#2a2a2a] rounded-lg px-4 py-2 border border-[#444444] flex items-center gap-3">
+                    <!-- Coin Icon -->
+                    <div style="w-6 h-6 rounded-full bg-[#ffd700] border-2 border-[#ffed4e] text-[#8b4513] text-xs font-bold text-center">
+                        G
+                    </div>
+                    <!-- Balance -->
+                    <span style="text-white font-bold" id="wallet-balance">test</span>
+                    <!-- Add Button -->
+                    <button style="w-6 h-6 bg-[#555555] text-white text-sm font-bold cursor-pointer hover:bg-[#666666] border-none">
+                        +
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Centered Game Container -->
+    <div style="min-h-[calc(100vh-80px)] p-8">
+        <div style="w-full max-w-4xl mx-auto text-center pt-16">
+            <!-- Game Title -->
+            <h1 style="text-6xl font-bold text-white mb-4 mx-auto">Slots</h1>
+            <p style="text-xl text-[#888888] mb-16 mx-auto">Spin to win! Each spin costs 25 chips. Match symbols to win big!</p>
+            
+            <!-- Slot Machine Container -->
+            <div style="bg-[#1a1a1a] border-4 border-[#333333] rounded-xl p-8 max-w-3xl mx-auto mb-16">
+                <!-- Reels Display -->
+                <div style="flex justify-center items-center gap-6 mb-8">
+                    <div id="reel1" style="w-24 h-32 bg-[#111111] border-2 border-[#444444] rounded-lg text-6xl flex items-center justify-center">
+                        ❓
+                    </div>
+                    <div id="reel2" style="w-24 h-32 bg-[#111111] border-2 border-[#444444] rounded-lg text-6xl flex items-center justify-center">
+                        ❓
+                    </div>
+                    <div id="reel3" style="w-24 h-32 bg-[#111111] border-2 border-[#444444] rounded-lg text-6xl flex items-center justify-center">
+                        ❓
+                    </div>
+                </div>
+                
+                <!-- Win Line -->
+                <div style="h-2 bg-[#7c3aed] w-full mx-auto rounded-full mb-8"></div>
+                
+                <!-- Result Display -->
+                <div id="result" style="text-3xl font-bold text-white mb-4 min-h-[3rem] mx-auto text-center"></div>
+                <div id="winDisplay" style="text-2xl font-bold text-[#10b981] mb-8 mx-auto text-center"></div>
+                
+                <!-- Spin Button -->
+                <button id="spinButton" style="bg-[#7c3aed] text-white px-12 py-6 rounded-xl text-2xl font-bold cursor-pointer hover:bg-[#8b5cf6] border-none mb-8 mx-auto block">
+                    Spin (25 chips)
+                </button>
+                
+                <!-- Paytable -->
+                <div style="bg-[#111111] border border-[#333333] rounded-lg p-4 mb-4">
+                    <h3 style="text-xl font-bold text-[#FFD700] mb-2">Paytable</h3>
+                    <div style="flex justify-between items-center mb-2">
+                        <div style="text-lg">7️⃣ 7️⃣ 7️⃣</div>
+                        <div style="text-lg text-[#FFD700] font-bold">Jackpot (300 chips)</div>
+                    </div>
+                    <div style="flex justify-between items-center mb-2">
+                        <div style="text-lg">💎 💎 💎</div>
+                        <div style="text-lg text-[#3b82f6] font-bold">Big Win (150 chips)</div>
+                    </div>
+                    <div style="flex justify-between items-center mb-2">
+                        <div style="text-lg">🔔 🔔 🔔</div>
+                        <div style="text-lg text-[#f59e0b] font-bold">Nice Win (100 chips)</div>
+                    </div>
+                    <div style="flex justify-between items-center mb-2">
+                        <div style="text-lg">Any 3 matching</div>
+                        <div style="text-lg text-[#10b981] font-bold">Regular Win (50 chips)</div>
+                    </div>
+                    <div style="flex justify-between items-center">
+                        <div style="text-lg">Any 2 matching</div>
+                        <div style="text-lg text-[#8b5cf6] font-bold">Small Win (10 chips)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats Grid -->
+            <div style="max-w-3xl mx-auto mb-12 text-center overflow-hidden">
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
+                    <div style="text-3xl font-bold text-white mb-2" id="totalSpins">0</div>
+                    <div style="text-[#888888] text-lg">Total Spins</div>
+                </div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
+                    <div style="text-3xl font-bold text-[#10b981] mb-2" id="totalWins">0</div>
+                    <div style="text-[#888888] text-lg">Wins</div>
+                </div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
+                    <div style="text-3xl font-bold text-[#C0C0C0] mb-2" id="totalLosses">0</div>
+                    <div style="text-[#888888] text-lg">Losses</div>
+                </div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
+                    <div style="text-3xl font-bold text-[#FFD700] mb-2" id="jackpotCount">0</div>
+                    <div style="text-[#888888] text-lg">Jackpots</div>
+                </div>
+            </div>
+            
+            <!-- Back to Games -->
+            <div style="text-center mx-auto">
+                <a href="/" style="text-[#7c3aed] hover:text-[#8b5cf6] cursor-pointer text-xl">← Back to Games</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

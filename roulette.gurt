@@ -1,0 +1,59 @@
+<head>
+    <script>
+    -- Navigation event handlers
+    local navHome = gurt.select('#nav-home')
+    local navSlots = gurt.select('#nav-slots')
+    local navBlackjack = gurt.select('#nav-blackjack')
+    local navRoulette = gurt.select('#nav-roulette')
+    local navPoker = gurt.select('#nav-poker')
+    local navDice = gurt.select('#nav-dice')
+    local navCoinflip = gurt.select('#nav-coinflip')
+    
+    navHome:on('click', function() gurt.location.goto('/') end)
+    navSlots:on('click', function() gurt.location.goto('/slots') end)
+    navBlackjack:on('click', function() gurt.location.goto('/blackjack') end)
+    navRoulette:on('click', function() gurt.location.goto('/roulette') end)
+    navPoker:on('click', function() gurt.location.goto('/poker') end)
+    navDice:on('click', function() gurt.location.goto('/dice') end)
+    navCoinflip:on('click', function() gurt.location.goto('/coinflip') end)
+    </script>
+</head>
+
+<body>
+ <!-- Top Navigation Bar -->
+    <div style="bg-[#111111] p-4 border-b border-[#333333]">
+        <div style="flex justify-between items-center max-w-6xl mx-auto">
+            <!-- Casino Brand -->
+            <div style="flex items-center">
+                <span style="text-xl font-bold mr-8 text-white">67 Casino</span>
+            </div>
+            
+            <!-- Menu Navigation -->
+            <div style="flex items-center">
+                <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-home">Home</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-slots">Slots</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-blackjack">Blackjack</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-roulette">Roulette</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-poker">Poker</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-dice">Dice</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-coinflip">CoinFlip</span>
+            </div>
+            
+            <!-- Gurt Wallet Balance (Far Right) -->
+            <div style="flex items-center ml-8">
+                <div style="bg-[#2a2a2a] rounded-lg px-4 py-2 border border-[#444444] flex items-center gap-3">
+                    <!-- Coin Icon -->
+                    <div style="w-6 h-6 rounded-full bg-[#ffd700] border-2 border-[#ffed4e] text-[#8b4513] text-xs font-bold text-center">
+                        G
+                    </div>
+                    <!-- Balance -->
+                    <span style="text-white font-bold" id="wallet-balance">test</span>
+                    <!-- Add Button -->
+                    <button style="w-6 h-6 bg-[#555555] text-white text-sm font-bold cursor-pointer hover:bg-[#666666] border-none">
+                        +
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

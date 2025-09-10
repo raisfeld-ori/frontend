@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice - 67 Casino</title>
+    <meta name="theme-color" content="#06b6d4">
+    <meta name="description" content="67 Casino - Premium Dice Games">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-bar {
+            background-color: #111111;
+            padding: 16px;
+            border-bottom: 1px solid #333333;
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 72rem;
+            margin: 0 auto;
+        }
+        .brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        .nav-menu {
+            display: flex;
+            align-items: center;
+        }
+        .nav-link {
+            color: #888888;
+            margin: 0 16px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .nav-link:hover {
+            color: white;
+        }
+        .nav-link.active {
+            color: white;
+        }
+        .nav-link.active:hover {
+            color: #06b6d4;
+        }
+        .wallet {
+            display: flex;
+            align-items: center;
+            margin-left: 32px;
+        }
+        .wallet-container {
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            padding: 8px 16px;
+            border: 1px solid #333333;
+            display: flex;
+            align-items: center;
+        }
+        .login-btn {
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: bold;
+            border: 1px solid #6d28d9;
+            text-decoration: none;
+        }
+        .hero {
+            background-color: #161616;
+            padding: 64px 16px;
+            text-align: center;
+        }
+        .hero-content {
+            max-width: 64rem;
+            margin: 0 auto;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 16px;
+        }
+        .hero p {
+            font-size: 1.125rem;
+            color: white;
+            opacity: 0.9;
+            max-width: 32rem;
+            margin: 0 auto;
+        }
+        .game-area {
+            padding: 32px;
+        }
+        .game-container {
+            max-width: 72rem;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .game-table {
+            background-color: #06b6d4;
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+        .game-table h2 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 16px;
+        }
+        .game-table p {
+            color: white;
+            margin-bottom: 24px;
+        }
+        .game-interface {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            padding: 24px;
+            border: 1px solid #333333;
+        }
+        .game-interface p {
+            color: white;
+            font-size: 1.125rem;
+        }
+        .game-interface .subtitle {
+            color: #888888;
+            margin-top: 8px;
+        }
+        .back-btn {
+            background-color: #333333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-btn:hover {
+            background-color: #444444;
+        }
+    </style>
+        <script>
+    -- Navigation event handlers
+    local navHome = gurt.select('#nav-home')
+    local navSlots = gurt.select('#nav-slots')
+    local navBlackjack = gurt.select('#nav-blackjack')
+    local navRoulette = gurt.select('#nav-roulette')
+    local navPoker = gurt.select('#nav-poker')
+    local navDice = gurt.select('#nav-dice')
+    local navCoinflip = gurt.select('#nav-coinflip')
+    
+    navHome:on('click', function() gurt.location.goto('/') end)
+    navSlots:on('click', function() gurt.location.goto('/slots') end)
+    navBlackjack:on('click', function() gurt.location.goto('/blackjack') end)
+    navRoulette:on('click', function() gurt.location.goto('/roulette') end)
+    navPoker:on('click', function() gurt.location.goto('/poker') end)
+    navDice:on('click', function() gurt.location.goto('/dice') end)
+    navCoinflip:on('click', function() gurt.location.goto('/coinflip') end)
+    </script>
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <div class="nav-bar">
+        <div class="nav-container">
+            <!-- Casino Brand -->
+            <div>
+                <a href="/" class="brand">67 Casino</a>
+            </div>
+            
+ <!-- Top Navigation Bar -->
+    <div style="bg-[#111111] p-4 border-b border-[#333333]">
+        <div style="flex justify-between items-center max-w-6xl mx-auto">
+            <!-- Casino Brand -->
+            <div style="flex items-center">
+                <span style="text-xl font-bold mr-8 text-white">67 Casino</span>
+            </div>
+            
+            <!-- Menu Navigation -->
+            <div style="flex items-center">
+                <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-home">Home</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-slots">Slots</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-blackjack">Blackjack</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-roulette">Roulette</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-poker">Poker</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-dice">Dice</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-coinflip">CoinFlip</span>
+            </div>
+            
+            <!-- Gurt Wallet Balance (Far Right) -->
+            <div style="flex items-center ml-8">
+                <div style="bg-[#2a2a2a] rounded-lg px-4 py-2 border border-[#444444] flex items-center gap-3">
+                    <!-- Coin Icon -->
+                    <div style="w-6 h-6 rounded-full bg-[#ffd700] border-2 border-[#ffed4e] text-[#8b4513] text-xs font-bold text-center">
+                        G
+                    </div>
+                    <!-- Balance -->
+                    <span style="text-white font-bold" id="wallet-balance">test</span>
+                    <!-- Add Button -->
+                    <button style="w-6 h-6 bg-[#555555] text-white text-sm font-bold cursor-pointer hover:bg-[#666666] border-none">
+                        +
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+            
+            <!-- Gurt Wallet (Far Right) -->
+            <div class="wallet">
+                <div class="wallet-container">
+                    <a href="/login" class="login-btn">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Hero Area -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Dice Games</h1>
+            <p>Roll the dice and test your luck! Classic craps and dice games with premium GURT betting.</p>
+        </div>
+    </div>
+
+    <!-- Game Area -->
+    <div class="game-area">
+        <div class="game-container">
+            <div class="game-table">
+                <h2>Dice Table</h2>
+                <p>Roll for fortune - snake eyes or lucky sevens!</p>
+                
+                <!-- Game Interface Placeholder -->
+                <div class="game-interface">
+                    <p>🎲 Game interface coming soon...</p>
+                    <p class="subtitle">Roll the dice and let luck decide your fate!</p>
+                </div>
+            </div>
+            
+            <!-- Back to Games -->
+            <a href="/" class="back-btn">← Back to Games</a>
+        </div>
+    </div>
+</body>
+</html>
