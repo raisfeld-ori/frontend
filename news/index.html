@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live News - 67 Casino</title>
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="description" content="Live news updates from 67 Casino">
+    <font name="inter" src="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2" />
+    <style>
+        body { 
+            font-inter 
+            bg-[#0a0a0a] 
+            text-white 
+            m-0 
+            p-0 
+            min-h-screen
+        }
+    </style>
+    <script src="../scripts/balance.lua"></script>
+    <script src="../scripts/navigation.lua"></script>
+    <script src="script.lua"></script>
+</head>
+<body>
+     <!-- Top Navigation Bar -->
+    <div style="bg-[#111111] p-4 border-b border-[#333333]">
+        <div style="flex justify-between items-center max-w-6xl mx-auto">
+            <!-- Casino Brand -->
+            <div style="flex items-center">
+                <span style="text-xl font-bold mr-8 text-white">67 Casino</span>
+            </div>
+            
+            <!-- Menu Navigation -->
+            <div style="flex items-center">
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-home">Home</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-slots">Slots</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-blackjack">Blackjack</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-roulette">Roulette</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-regex">regex</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-dice">Dice</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-coinflip">CoinFlip</span>
+                <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-news">Live News</span>
+            </div>
+            
+            <!-- Gurt Wallet Balance (Far Right) -->
+            <div style="flex items-center ml-8">
+                <div style="bg-[#2a2a2a] rounded-lg px-4 py-2 border border-[#444444] flex items-center gap-3">
+                    <!-- Coin Icon -->
+                    <div style="w-6 h-6 rounded-full bg-[#ffd700] border-2 border-[#ffed4e] text-[#8b4513] text-xs font-bold text-center">
+                        G
+                    </div>
+                    <!-- Balance -->
+                    <span style="text-white font-bold" id="wallet-balance">...</span>
+                    <!-- Add Button -->
+                    <button style="w-6 h-6 bg-[#555555] text-white text-sm font-bold cursor-pointer hover:bg-[#666666] border-none">
+                        +
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="no-news-message" style="bg-[#2a2a2a] p-8 rounded-lg border border-[#444444] text-center mb-6">
+                <div style="text-[#7c3aed] text-6xl mb-4">📰</div>
+                <h3 style="text-white font-bold text-xl mb-3">No New News Today</h3>
+                <p style="text-[#888888] mb-4">It looks like there aren't any new articles available right now.</p>
+                <p style="text-[#888888] text-sm mb-6">Check back later for the latest updates!</p>
+    </div>
+
+    <!-- News Header -->
+    <div style="bg-[#161616] p-8 text-center border-b border-[#333333]">
+        <div style="max-w-4xl mx-auto">
+            <h1 style="text-4xl font-bold text-white mb-4">Live News</h1>
+            <p style="text-lg text-[#888888]">Stay updated with the latest from 67 Casino</p>
+        </div>
+    </div>
+
+    <!-- News Content -->
+    <div style="p-8">
+        <div style="max-w-4xl mx-auto">
+            <!-- Breaking News Banner -->
+            <div style="bg-[#dc2626] p-4 rounded-lg mb-8 border border-[#991b1b]">
+                <div style="flex items-center">
+                    <span style="bg-white text-[#dc2626] px-3 py-1 rounded-full text-sm font-bold mr-4">BREAKING</span>
+                    <span style="text-white font-bold">New Slot Machine "Lucky 777" Now Available!</span>
+                </div>
+            </div>
+
+            <!-- News Articles -->
+            <div id="news-articles" style="flex flex-col gap-6">
+                <!-- Articles will be loaded here by script.lua -->
+            </div>
+
+            <!-- Load More Button -->
+            <div style="text-center mt-8">
+                <button id="load-more-btn" style="bg-[#7c3aed] hover:bg-[#8b5cf6] text-white px-6 py-3 rounded-lg font-bold cursor-pointer border-none">
+                    Load More News
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Updates Section -->
+    <div style="bg-[#111111] border-t border-[#333333] p-8">
+        <div style="max-w-4xl mx-auto text-center">
+            <h3 style="text-xl font-bold text-white mb-4">Live Casino Stats</h3>
+            <div style="flex justify-center gap-8">
+                <div style="text-center">
+                    <div style="text-2xl font-bold text-[#7c3aed]">1,247</div>
+                    <div style="text-[#888888] text-sm">Players Online</div>
+                </div>
+                <div style="text-center">
+                    <div style="text-2xl font-bold text-[#10b981]">₲125,430</div>
+                    <div style="text-[#888888] text-sm">Daily Payouts</div>
+                </div>
+                <div style="text-center">
+                    <div style="text-2xl font-bold text-[#f59e0b]">89</div>
+                    <div style="text-[#888888] text-sm">Active Games</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -54,6 +54,13 @@ local function flipCoin()
     result.text = "Flipping..."
     result.style = "text-2xl font-bold text-[#fbbf24] mb-8"
     
+    -- Play coin flip sound effect
+    local coinFlipAudio = gurt.select('#coin-flip-audio')
+    if coinFlipAudio then
+        coinFlipAudio.src = "gurt://" .. gurt.location.href .. "/coin-flip.mp3"  -- Ensure the source is set
+        coinFlipAudio:play()
+    end
+    
     -- Coin animation
     local animCount = 0
     local animation = setInterval(function()

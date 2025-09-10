@@ -130,6 +130,12 @@ local function dealCards()
         return
     end
     
+    -- Play cards sound effect when starting a new game
+    local cardsAudio = gurt.select('#cards-audio')
+    if cardsAudio then
+        cardsAudio:play()
+    end
+    
     initializeDeck()
     playerCards = {}
     dealerCards = {}

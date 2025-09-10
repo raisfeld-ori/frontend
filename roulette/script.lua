@@ -305,6 +305,12 @@ local function spinRoulette()
     isSpinning = true
     spinButton.text = "Spinning..."
     result.text = "The wheel is spinning..."
+    -- Play roulette sound effect
+    local rouletteAudio = gurt.select('#roulette-audio')
+    if rouletteAudio then
+        rouletteAudio.src = "../roulette.mp3"  -- Ensure the source is set
+        rouletteAudio:play()
+    end
     
     -- Animate spinning
     local spinCount = 0
