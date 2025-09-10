@@ -156,7 +156,6 @@ local function generateChallenge()
     gameState = "answering"
     if result then result.text = "Make your choice: YES or NO" end
     
-    trace.log("Generated challenge - Pattern: " .. currentPattern .. " Text: " .. currentTestString .. " Answer: " .. tostring(correctAnswer))
 end
 
 -- Handle answer selection
@@ -188,8 +187,6 @@ local function selectAnswer(playerAnswer)
     -- Update balance
     updateBalance(newBalance)
     updateStats()
-    
-    trace.log("Answer processed - Player: " .. tostring(playerAnswer) .. " Correct: " .. tostring(correctAnswer))
 end
 
 -- Initialize game
