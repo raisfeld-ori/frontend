@@ -1,4 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>67 Casino - Dice Game</title>
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="description" content="67 Casino - Premium virtual gaming experience">
+    <font name="inter" src="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2" />
+    <style>
+        body { font-inter }
+    </style>
+    <script>
+    local balance = gurt.crumbs.get("balance")
+    if balance == nil then
+        gurt.crumbs.set({
+            name = "balance",
+            value = 100
+        })
+        balance = 100
+    end
+    local element = gurt.select('#wallet-balance')
+    element.text = balance
+    </script>
     <script>
     -- Navigation event handlers
     local navHome = gurt.select('#nav-home')
@@ -18,9 +41,8 @@
     navCoinflip:on('click', function() gurt.location.goto('/coinflip') end)
     </script>
 </head>
-
-<body>
- <!-- Top Navigation Bar -->
+<body style="bg-[#0a0a0a] text-white m-0 p-0 font-inter">
+    <!-- Top Navigation Bar -->
     <div style="bg-[#111111] p-4 border-b border-[#333333]">
         <div style="flex justify-between items-center max-w-6xl mx-auto">
             <!-- Casino Brand -->
@@ -30,12 +52,12 @@
             
             <!-- Menu Navigation -->
             <div style="flex items-center">
-                <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-home">Home</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-home">Home</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-slots">Slots</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-blackjack">Blackjack</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-roulette">Roulette</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-poker">Poker</span>
-                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-dice">Dice</span>
+                <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-dice">Dice</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-coinflip">CoinFlip</span>
             </div>
             
@@ -56,4 +78,13 @@
             </div>
         </div>
     </div>
+
+    <!-- Main Content Area -->
+    <div style="min-h-screen flex items-center justify-center p-8">
+        <div style="text-center">
+            <h1 style="text-4xl font-bold text-white mb-4">Dice Game</h1>
+            <p style="text-xl text-[#888888]">Incomplete: I didn't finish this page in time ):</p>
+        </div>
+    </div>
 </body>
+</html>
