@@ -3,43 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>67 Casino - Dice Game</title>
+    <title>Poker - 67 Casino</title>
     <meta name="theme-color" content="#7c3aed">
     <meta name="description" content="67 Casino - Premium virtual gaming experience">
     <font name="inter" src="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2" />
     <style>
         body { font-inter }
     </style>
-    <script>
-    local balance = gurt.crumbs.get("balance")
-    if balance == nil then
-        gurt.crumbs.set({
-            name = "balance",
-            value = 100
-        })
-        balance = 100
-    end
-    local element = gurt.select('#wallet-balance')
-    element.text = balance
-    </script>
-    <script>
-    -- Navigation event handlers
-    local navHome = gurt.select('#nav-home')
-    local navSlots = gurt.select('#nav-slots')
-    local navBlackjack = gurt.select('#nav-blackjack')
-    local navRoulette = gurt.select('#nav-roulette')
-    local navPoker = gurt.select('#nav-poker')
-    local navDice = gurt.select('#nav-dice')
-    local navCoinflip = gurt.select('#nav-coinflip')
-    
-    navHome:on('click', function() gurt.location.goto('/') end)
-    navSlots:on('click', function() gurt.location.goto('/slots') end)
-    navBlackjack:on('click', function() gurt.location.goto('/blackjack') end)
-    navRoulette:on('click', function() gurt.location.goto('/roulette') end)
-    navPoker:on('click', function() gurt.location.goto('/poker') end)
-    navDice:on('click', function() gurt.location.goto('/dice') end)
-    navCoinflip:on('click', function() gurt.location.goto('/coinflip') end)
-    </script>
+    <script src="https://unpkg.com/gurt@latest/dist/gurt.min.js"></script>
+    <script src="script.lua"></script>
 </head>
 <body style="bg-[#0a0a0a] text-white m-0 p-0 font-inter">
     <!-- Top Navigation Bar -->
@@ -56,8 +28,8 @@
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-slots">Slots</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-blackjack">Blackjack</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-roulette">Roulette</span>
-                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-poker">Poker</span>
-                <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-dice">Dice</span>
+                <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-poker">Poker</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-dice">Dice</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-coinflip">CoinFlip</span>
             </div>
             
@@ -69,7 +41,7 @@
                         G
                     </div>
                     <!-- Balance -->
-                    <span style="text-white font-bold" id="wallet-balance">test</span>
+                    <span style="text-white font-bold" id="wallet-balance">100</span>
                     <!-- Add Button -->
                     <button style="w-6 h-6 bg-[#555555] text-white text-sm font-bold cursor-pointer hover:bg-[#666666] border-none">
                         +
@@ -79,11 +51,91 @@
         </div>
     </div>
 
-    <!-- Main Content Area -->
-    <div style="min-h-screen flex items-center justify-center p-8">
-        <div style="text-center">
-            <h1 style="text-4xl font-bold text-white mb-4">Dice Game</h1>
-            <p style="text-xl text-[#888888]">Incomplete: I didn't finish this page in time ):</p>
+    <!-- Main Game Container -->
+    <div style="min-h-[calc(100vh-80px)] p-8">
+        <div style="w-full max-w-4xl mx-auto text-center pt-8">
+            <!-- Game Title -->
+            <h1 style="text-6xl font-bold text-white mb-4">Blackjack</h1>
+            <p style="text-xl text-[#888888] mb-12">Get as close to 21 as possible without going over</p>
+            
+            <!-- Game Table -->
+            <div style="bg-[#1a1a1a] border-4 border-[#10b981] rounded-xl p-8 mb-8 max-w-3xl mx-auto">
+                <!-- Dealer Section -->
+                <div style="mb-8">
+                    <h3 style="text-2xl font-bold text-white mb-4">Dealer</h3>
+                    <div id="dealer-cards" style="text-2xl mb-4 min-h-[3rem]"></div>
+                    <div id="dealer-score" style="text-lg text-[#888888]"></div>
+                </div>
+                
+                <!-- Player Section -->
+                <div style="mb-8">
+                    <h3 style="text-2xl font-bold text-white mb-4">Your Hand</h3>
+                    <div id="player-cards" style="text-2xl mb-4 min-h-[3rem]"></div>
+                    <div id="player-score" style="text-lg text-[#888888]"></div>
+                </div>
+                
+                <!-- Result Display -->
+                <div id="result" style="text-2xl font-bold text-white mb-6 min-h-[2rem]">Place your bet and deal!</div>
+            </div>
+            
+            <!-- Betting Controls -->
+            <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 mb-8 max-w-2xl mx-auto">
+                <div style="mb-6">
+                    <label style="display: block; text-lg font-medium text-white mb-2">Bet amount:</label>
+                    <input id="bet-input" type="number" style="w-48 p-3 bg-[#2a2a2a] border border-[#444444] rounded-lg text-white mx-auto" placeholder="Enter chips" min="1" value="10" />
+                </div>
+                
+                <!-- Game Buttons -->
+                <div style="flex justify-center gap-4">
+                    <button id="deal-button" style="bg-[#10b981] text-white px-8 py-3 rounded-xl text-xl font-bold cursor-pointer hover:bg-[#34d399] border-none">
+                        DEAL
+                    </button>
+                    <button id="hit-button" style="bg-[#fbbf24] text-white px-8 py-3 rounded-xl text-xl font-bold cursor-pointer hover:bg-[#fcd34d] border-none opacity-50">
+                        HIT
+                    </button>
+                    <button id="stand-button" style="bg-[#ef4444] text-white px-8 py-3 rounded-xl text-xl font-bold cursor-pointer hover:bg-[#f87171] border-none opacity-50">
+                        STAND
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Rules -->
+            <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 mb-8 max-w-2xl mx-auto">
+                <h3 style="text-2xl font-bold text-white mb-4">Rules</h3>
+                <div style="text-left text-[#888888] space-y-2">
+                    <p>• Get as close to 21 as possible without going over</p>
+                    <p>• Face cards (J, Q, K) are worth 10 points</p>
+                    <p>• Aces are worth 11 or 1 (whichever is better)</p>
+                    <p>• Dealer must hit on 16 and stand on 17</p>
+                    <p>• Blackjack (21 with 2 cards) pays 2.5x</p>
+                    <p>• Regular wins pay 2x</p>
+                </div>
+            </div>
+            
+            <!-- Stats Grid -->
+            <div style="max-w-4xl mx-auto mb-8 text-center overflow-hidden">
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[150px] float-left">
+                    <div style="text-3xl font-bold text-[#10b981] mb-2" id="wins-count">0</div>
+                    <div style="text-[#888888] text-lg">Wins</div>
+                </div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[150px] float-left">
+                    <div style="text-3xl font-bold text-[#ef4444] mb-2" id="losses-count">0</div>
+                    <div style="text-[#888888] text-lg">Losses</div>
+                </div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[150px] float-left">
+                    <div style="text-3xl font-bold text-white mb-2" id="total-count">0</div>
+                    <div style="text-[#888888] text-lg">Total</div>
+                </div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[150px] float-left">
+                    <div style="text-3xl font-bold text-[#ffd700] mb-2" id="big-wins-count">0</div>
+                    <div style="text-[#888888] text-lg">Big Wins</div>
+                </div>
+            </div>
+            
+            <!-- Back to Games -->
+            <div style="text-center clear-both pt-8">
+                <a href="/" style="text-[#7c3aed] hover:text-[#8b5cf6] cursor-pointer text-xl">← Back to Games</a>
+            </div>
         </div>
     </div>
 </body>

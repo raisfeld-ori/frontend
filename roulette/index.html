@@ -3,43 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>67 Casino - Dice Game</title>
+    <title>Roulette - 67 Casino</title>
     <meta name="theme-color" content="#7c3aed">
     <meta name="description" content="67 Casino - Premium virtual gaming experience">
     <font name="inter" src="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2" />
     <style>
         body { font-inter }
     </style>
-    <script>
-    local balance = gurt.crumbs.get("balance")
-    if balance == nil then
-        gurt.crumbs.set({
-            name = "balance",
-            value = 100
-        })
-        balance = 100
-    end
-    local element = gurt.select('#wallet-balance')
-    element.text = balance
-    </script>
-    <script>
-    -- Navigation event handlers
-    local navHome = gurt.select('#nav-home')
-    local navSlots = gurt.select('#nav-slots')
-    local navBlackjack = gurt.select('#nav-blackjack')
-    local navRoulette = gurt.select('#nav-roulette')
-    local navPoker = gurt.select('#nav-poker')
-    local navDice = gurt.select('#nav-dice')
-    local navCoinflip = gurt.select('#nav-coinflip')
-    
-    navHome:on('click', function() gurt.location.goto('/') end)
-    navSlots:on('click', function() gurt.location.goto('/slots') end)
-    navBlackjack:on('click', function() gurt.location.goto('/blackjack') end)
-    navRoulette:on('click', function() gurt.location.goto('/roulette') end)
-    navPoker:on('click', function() gurt.location.goto('/poker') end)
-    navDice:on('click', function() gurt.location.goto('/dice') end)
-    navCoinflip:on('click', function() gurt.location.goto('/coinflip') end)
-    </script>
+    <script src="https://unpkg.com/gurt@latest/dist/gurt.min.js"></script>
+    <script src="script.lua"></script>
 </head>
 <body style="bg-[#0a0a0a] text-white m-0 p-0 font-inter">
     <!-- Top Navigation Bar -->
@@ -55,9 +27,9 @@
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-home">Home</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-slots">Slots</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-blackjack">Blackjack</span>
-                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-roulette">Roulette</span>
+                <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-roulette">Roulette</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-poker">Poker</span>
-                <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-dice">Dice</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-dice">Dice</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-coinflip">CoinFlip</span>
             </div>
             
@@ -69,7 +41,7 @@
                         G
                     </div>
                     <!-- Balance -->
-                    <span style="text-white font-bold" id="wallet-balance">test</span>
+                    <span style="text-white font-bold" id="wallet-balance">100</span>
                     <!-- Add Button -->
                     <button style="w-6 h-6 bg-[#555555] text-white text-sm font-bold cursor-pointer hover:bg-[#666666] border-none">
                         +
@@ -79,11 +51,120 @@
         </div>
     </div>
 
-    <!-- Main Content Area -->
-    <div style="min-h-screen flex items-center justify-center p-8">
-        <div style="text-center">
-            <h1 style="text-4xl font-bold text-white mb-4">Dice Game</h1>
-            <p style="text-xl text-[#888888]">Incomplete: I didn't finish this page in time ):</p>
+    <!-- Main Game Container -->
+    <div style="min-h-[calc(100vh-80px)] p-8">
+        <div style="w-full max-w-6xl mx-auto text-center pt-8">
+            <!-- Game Title -->
+            <h1 style="text-6xl font-bold text-white mb-4">Roulette</h1>
+            <p style="text-xl text-[#888888] mb-12">Place your bets and spin the wheel</p>
+            
+            <!-- Winning Number Display -->
+            <div style="bg-[#1a1a1a] border-4 border-[#ffd700] rounded-xl p-8 mb-8 max-w-2xl mx-auto">
+                <div id="winning-number" style="text-6xl font-bold text-white mb-8">--</div>
+                <div id="result" style="text-2xl font-bold text-white mb-6">Place your bets!</div>
+            </div>
+            
+            <!-- Betting Controls -->
+            <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 mb-8 max-w-4xl mx-auto">
+                    <div id="origin-container" style="flex flex-col gap-2">
+                        <p id="origin-text" style="text-lg font-medium text-white mb-2">Chips to be bet:</p>
+                        <input id="bet-input" type="number" placeholder="0" style="text-white" />
+                    </div>
+                
+                <!-- Spin Button -->
+                <button id="spin-button" style="bg-[#ef4444] text-white px-12 py-4 rounded-xl text-2xl font-bold cursor-pointer hover:bg-[#f87171] border-none mb-6">
+                    SPIN
+                </button>
+            </div>
+            
+            <!-- Number Grid -->
+            <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 mb-8 max-w-4xl mx-auto">
+                <h3 style="text-2xl font-bold text-white mb-4">Number Bets (35:1)</h3>
+                <div style="grid grid-cols-13 gap-2 mb-4">
+                    <button style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">0</button>
+                    <button id="num-1" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">1</button>
+                    <button id="num-2" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">2</button>
+                    <button id="num-3" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">3</button>
+                    <button id="num-4" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">4</button>
+                    <button id="num-5" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">5</button>
+                    <button id="num-6" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">6</button>
+                    <button id="num-7" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">7</button>
+                    <button id="num-8" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">8</button>
+                    <button id="num-9" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">9</button>
+                    <button id="num-10" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">10</button>
+                    <button id="num-11" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">11</button>
+                    <button id="num-12" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">12</button>
+                </div>
+                <div style="grid grid-cols-12 gap-2 mb-4">
+                    <button id="num-13" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">13</button>
+                    <button id="num-14" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">14</button>
+                    <button id="num-15" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">15</button>
+                    <button id="num-16" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">16</button>
+                    <button id="num-17" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">17</button>
+                    <button id="num-18" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">18</button>
+                    <button id="num-19" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">19</button>
+                    <button id="num-20" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">20</button>
+                    <button id="num-21" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">21</button>
+                    <button id="num-22" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">22</button>
+                    <button id="num-23" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">23</button>
+                    <button id="num-24" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">24</button>
+                </div>
+                <div style="grid grid-cols-12 gap-2">
+                    <button id="num-25" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">25</button>
+                    <button id="num-26" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">26</button>
+                    <button id="num-27" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">27</button>
+                    <button id="num-28" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">28</button>
+                    <button id="num-29" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">29</button>
+                    <button id="num-30" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">30</button>
+                    <button id="num-31" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">31</button>
+                    <button id="num-32" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">32</button>
+                    <button id="num-33" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">33</button>
+                    <button id="num-34" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">34</button>
+                    <button id="num-35" style="w-12 h-12 bg-[#ef4444] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">35</button>
+                    <button id="num-36" style="w-12 h-12 bg-[#1f2937] text-white font-bold rounded border-2 border-[#333333] cursor-pointer hover:border-[#ffd700]">36</button>
+                </div>
+            </div>
+            
+            <!-- Color and Type Bets -->
+            <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 mb-8 max-w-4xl mx-auto">
+                <h3 style="text-2xl font-bold text-white mb-4">Color & Type Bets (1:1)</h3>
+                <div style="grid grid-cols-3 gap-4 mb-4">
+                    <button id="bet-red" style="bg-[#ef4444] text-white px-6 py-3 rounded-lg border-2 border-[#333333] cursor-pointer hover:border-[#ffd700] font-bold">RED</button>
+                    <button id="bet-black" style="bg-[#1f2937] text-white px-6 py-3 rounded-lg border-2 border-[#333333] cursor-pointer hover:border-[#ffd700] font-bold">BLACK</button>
+                    <button style="bg-[#555555] text-white px-6 py-3 rounded-lg border-2 border-[#333333] opacity-50 font-bold">GREEN (0)</button>
+                </div>
+                <div style="grid grid-cols-4 gap-4">
+                    <button id="bet-even" style="bg-[#374151] text-white px-6 py-3 rounded-lg border-2 border-[#333333] cursor-pointer hover:border-[#ffd700] font-bold">EVEN</button>
+                    <button id="bet-odd" style="bg-[#374151] text-white px-6 py-3 rounded-lg border-2 border-[#333333] cursor-pointer hover:border-[#ffd700] font-bold">ODD</button>
+                    <button id="bet-low" style="bg-[#374151] text-white px-6 py-3 rounded-lg border-2 border-[#333333] cursor-pointer hover:border-[#ffd700] font-bold">1-18</button>
+                    <button id="bet-high" style="bg-[#374151] text-white px-6 py-3 rounded-lg border-2 border-[#333333] cursor-pointer hover:border-[#ffd700] font-bold">19-36</button>
+                </div>
+            </div>
+            
+            <!-- Stats Grid -->
+            <div style="max-w-4xl mx-auto mb-8 text-center overflow-hidden">
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[150px] float-left">
+                    <div style="text-3xl font-bold text-[#10b981] mb-2" id="wins-count">0</div>
+                    <div style="text-[#888888] text-lg">Wins</div>
+                </div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[150px] float-left">
+                    <div style="text-3xl font-bold text-[#ef4444] mb-2" id="losses-count">0</div>
+                    <div style="text-[#888888] text-lg">Losses</div>
+                </div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[150px] float-left">
+                    <div style="text-3xl font-bold text-white mb-2" id="total-count">0</div>
+                    <div style="text-[#888888] text-lg">Total</div>
+                </div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[150px] float-left">
+                    <div style="text-3xl font-bold text-[#ffd700] mb-2" id="big-wins-count">0</div>
+                    <div style="text-[#888888] text-lg">Big Wins</div>
+                </div>
+            </div>
+            
+            <!-- Back to Games -->
+            <div style="text-center clear-both pt-8">
+                <a href="/" style="text-[#7c3aed] hover:text-[#8b5cf6] cursor-pointer text-xl">← Back to Games</a>
+            </div>
         </div>
     </div>
 </body>
