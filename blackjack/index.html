@@ -15,6 +15,43 @@
             m-0 
             p-0 
             min-h-screen
+            text-center
+        }
+        
+        .playing-card {
+            w-16
+            h-20
+            bg-white
+            border-2
+            border-[#333333]
+            rounded-lg
+            text-center
+            text-black
+            font-bold
+            text-lg
+            inline-block
+            mr-3
+            flex
+            items-center
+            justify-center
+        }
+        
+        .card-hidden {
+            w-16
+            h-20
+            bg-[#2563eb]
+            border-2
+            border-[#1e40af]
+            rounded-lg
+            text-center
+            text-white
+            font-bold
+            text-lg
+            inline-block
+            mr-3
+            flex
+            items-center
+            justify-center
         }
     </style>
     <script>
@@ -102,16 +139,28 @@
 
         -- Display cards
         local function displayCards(cards, element, hideFirst)
-            local html = ""
+            if #cards == 0 then
+                element.text = "No cards"
+                return
+            end
+            
+            local cardDisplay = ""
             for i, card in ipairs(cards) do
                 if hideFirst and i == 1 then
-                    html = html .. '<div style="w-16 h-24 bg-[#1a1a1a] border border-[#444444] rounded-lg flex items-center justify-center text-xs font-bold mr-2 mb-2 float-left">?</div>'
+                    -- Hidden card
+                    cardDisplay = cardDisplay .. "HIDDEN  "
                 else
-                    local color = (card.suit == "♥" or card.suit == "♦") and "#ef4444" or "#ffffff"
-                    html = html .. '<div style="w-16 h-24 bg-[#f8f8f8] border border-[#444444] rounded-lg flex items-center justify-center text-xs font-bold mr-2 mb-2 float-left text-[' .. color .. '] bg-white">' .. card.rank .. card.suit .. '</div>'
+                    -- Visible card - simple format
+                    cardDisplay = cardDisplay .. card.rank .. card.suit .. "  "
                 end
             end
-            element.text = html
+            
+            if element then
+                element.text = cardDisplay
+                trace.log("Displaying cards: " .. cardDisplay)
+            else
+                trace.log("Element not found for card display")
+            end
         end
 
         -- Update scores
@@ -174,8 +223,8 @@
             
             -- Show/hide buttons
             dealButton.style = "display: none"
-            hitButton.style = "bg-[#10b981] text-white px-6 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#059669] border-none mr-4"
-            standButton.style = "bg-[#ef4444] text-white px-6 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#dc2626] border-none mr-4"
+            hitButton.style = "display: inline-block; bg-[#10b981] text-white px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#059669] border-none"
+            standButton.style = "display: inline-block; bg-[#ef4444] text-white px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#dc2626] border-none"
         end
 
         -- End game function
@@ -207,7 +256,7 @@
             -- Show new game button
             hitButton.style = "display: none"
             standButton.style = "display: none"
-            newGameButton.style = "bg-[#7c3aed] text-white px-6 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#8b5cf6] border-none"
+            newGameButton.style = "display: inline-block; bg-[#7c3aed] text-white px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#8b5cf6] border-none"
         end
 
         -- Hit function
@@ -277,7 +326,7 @@
             updateGameStatus("Click Deal to start! (50 chips per game)")
             
             -- Show/hide buttons
-            dealButton.style = "bg-[#7c3aed] text-white px-6 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#8b5cf6] border-none"
+            dealButton.style = "display: inline-block; bg-[#7c3aed] text-white px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#8b5cf6] border-none"
             hitButton.style = "display: none"
             standButton.style = "display: none"
             newGameButton.style = "display: none"
@@ -354,66 +403,67 @@
     </div>
 
     <!-- Main Game Container -->
-    <div style="min-h-[calc(100vh-80px)] p-8">
-        <div style="w-full max-w-6xl mx-auto text-center">
+    <div style="min-h-screen bg-[#0a0a0a] p-8">
+        <div style="max-w-6xl mx-auto text-center">
             <!-- Game Title -->
-            <h1 style="text-5xl font-bold text-white mb-4 mx-auto">Blackjack</h1>
-            <p style="text-xl text-[#888888] mb-12 mx-auto">Get as close to 21 as possible without going over!</p>
+            <h1 style="text-5xl font-bold text-white mb-8 text-center">Blackjack</h1>
+            <p style="text-xl text-[#888888] mb-12 text-center">Get as close to 21 as possible without going over!</p>
             
             <!-- Game Status -->
-            <div id="game-status" style="text-2xl font-bold text-[#7c3aed] mb-8 min-h-[2rem] mx-auto text-center">Click Deal to start! (50 chips per game)</div>
+            <div id="game-status" style="text-2xl font-bold text-[#7c3aed] mb-8 text-center">Click Deal to start! (50 chips per game)</div>
             
             <!-- Betting Area -->
-            <div style="mb-8">
-                <div id="bet-amount" style="text-lg text-white mb-4">Bet: 50 chips per game</div>
-                <button id="deal-button" style="bg-[#7c3aed] text-white px-6 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#8b5cf6] border-none">Deal</button>
+            <div style="mb-12 text-center mx-auto">
+                <div id="bet-amount" style="text-lg text-white mb-4 text-center">Bet: 50 chips per game</div>
+                <button id="deal-button" style="bg-[#7c3aed] mx-auto text-white px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#8b5cf6] border-none">Deal</button>
             </div>
             
             <!-- Game Area -->
-            <div style="flex justify-center gap-16 mb-12">
+            <div style="flex flex-col items-center gap-12 mb-12 mx-auto">
                 <!-- Dealer Section -->
                 <div style="text-center">
                     <h3 style="text-2xl font-bold text-white mb-4">Dealer</h3>
-                    <p id="dealer-score">0</p>
-                    <div id="dealer-cards" style="min-h-[120px] overflow-hidden"></div>
+                    <div id="dealer-cards" style="text-white text-xl bg-[#1a1a1a] p-4 rounded-lg border border-[#333333] min-h-[80px] text-center font-mono mb-2">No cards</div>
+                    <div style="text-lg text-white">Total: <span id="dealer-score">0</span></div>
                 </div>
                 
                 <!-- Player Section -->
                 <div style="text-center">
                     <h3 style="text-2xl font-bold text-white mb-4">You</h3>
-                    <p id="player-score">0</p>
-                    <div id="player-cards" style="min-h-[120px] overflow-hidden"></div>
+                    <div id="player-cards" style="text-white text-xl bg-[#1a1a1a] p-4 rounded-lg border border-[#333333] min-h-[80px] text-center font-mono mb-2">No cards</div>
+                    <div style="text-lg text-white">Total: <span id="player-score">0</span></div>
                 </div>
             </div>
             
             <!-- Action Buttons -->
-            <div style="mb-12">
-                <button id="hit-button" style="display: none">Hit</button>
-                <button id="stand-button" style="display: none">Stand</button>
-                <button id="new-game-button" style="display: none">New Game</button>
+            <div style="flex justify-center gap-4 mb-12 mx-auto">
+<button id="hit-button" style="bg-[#10b981] text-white px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#059669] border-none; display: none">Hit</button>
+<button id="stand-button" style="bg-[#ef4444] text-white px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#dc2626] border-none; display: none">Stand</button>
+<button id="new-game-button" style="bg-[#7c3aed] text-white px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#8b5cf6] border-none; display: none">New Game</button>
             </div>
             
             <!-- Stats Grid -->
-            <div style="max-w-3xl mx-auto mb-12 text-center overflow-hidden">
-                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
-                    <div style="text-3xl font-bold text-[#10b981] mb-2" id="games-won">0</div>
-                    <div style="text-[#888888] text-lg">Won</div>
+            <div style="flex justify-center gap-6 mb-12">
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center w-48">
+                    <div style="text-3xl font-bold text-[#10b981] mb-2 text-center" id="games-won">0</div>
+                    <div style="text-[#888888] text-lg text-center">Won</div>
                 </div>
-                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
-                    <div style="text-3xl font-bold text-[#ef4444] mb-2" id="games-lost">0</div>
-                    <div style="text-[#888888] text-lg">Lost</div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center w-48">
+                    <div style="text-3xl font-bold text-[#ef4444] mb-2 text-center" id="games-lost">0</div>
+                    <div style="text-[#888888] text-lg text-center">Lost</div>
                 </div>
-                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
-                    <div style="text-3xl font-bold text-white mb-2" id="total-games">0</div>
-                    <div style="text-[#888888] text-lg">Total Games</div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center w-48">
+                    <div style="text-3xl font-bold text-white mb-2 text-center" id="total-games">0</div>
+                    <div style="text-[#888888] text-lg text-center">Total Games</div>
                 </div>
             </div>
             
             <!-- Back to Games -->
-            <div style="text-center mx-auto">
-                <a href="/" style="text-[#7c3aed] hover:text-[#8b5cf6] cursor-pointer text-xl text-decoration-none">← Back to Games</a>
+            <div style="text-center">
+                <a href="/" style="text-[#7c3aed] hover:text-[#8b5cf6] cursor-pointer text-xl no-underline">← Back to Games</a>
             </div>
         </div>
+    </div>
     </div>
 </body>
 </html>
