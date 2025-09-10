@@ -10,147 +10,9 @@
     <style>
         body { font-inter }
     </style>
-    <script>
-    local balance = tonumber(gurt.crumbs.get("balance"))
-    if balance == nil then
-        gurt.crumbs.set({
-            name = "balance",
-            value = 100
-        })
-        balance = 100
-    end
-    local element = gurt.select('#wallet-balance')
-    element.text = balance
-    </script>
-    <script>
-        -- Dice Game Logic
-        local winsCount = 0
-        local lossesCount = 0
-        local totalRolls = 0
-        local isRolling = false
-
-        -- Get DOM elements
-        local diceDisplay = gurt.select('#dice-display')
-        local guessInput = gurt.select('#origin')
-        local rollButton = gurt.select('#roll-button')
-        local result = gurt.select('#result')
-        local winsDisplay = gurt.select('#wins-count')
-        local lossesDisplay = gurt.select('#losses-count')
-        local totalDisplay = gurt.select('#total-rolls')
-
-        -- Function to update stats display
-        local function updateDisplay()
-            winsDisplay.text = tostring(winsCount)
-            lossesDisplay.text = tostring(lossesCount)
-            totalDisplay.text = tostring(totalRolls)
-        end
-
-        -- Function to roll the dice
-        local function rollDice()
-            if isRolling then
-                return
-            end
-
-            -- Get user's guess
-            local guess = tonumber(guessInput.value)
-            if guess == nil or guess < 1 or guess > 6 then
-                result.text = "Please enter a number between 1 and 6!"
-                result.style = "text-2xl font-bold text-[#ef4444] mb-8 text-center"
-                return
-            end
-
-            -- Check if user has enough balance for the bet
-            local balance = tonumber(gurt.crumbs.get("balance"))
-            if balance < 50 then
-                result.text = "Insufficient balance! You need at least 50 chips to play."
-                result.style = "text-2xl font-bold text-[#ef4444] mb-8 text-center"
-                return
-            end
-            
-            isRolling = true
-            rollButton.text = "Rolling..."
-            result.text = ""
-            
-            -- Animate dice rolling by changing numbers rapidly
-            local rollCount = 0
-            local rollInterval = setInterval(function()
-                rollCount = rollCount + 1
-                local animNumber = math.random(1, 6)
-                diceDisplay.text = tostring(animNumber)
-            end, 100)
-            
-            -- Generate final dice result (1-6)
-            local diceResult = math.random(1, 6)
-            
-            -- Stop rolling animation and show final result after 1 second
-            setTimeout(function()
-                clearInterval(rollInterval)
-                
-                -- Show final dice result
-                diceDisplay.text = tostring(diceResult)
-                
-                -- Check if guess matches dice result
-                if guess == diceResult then
-                    -- Win: give 300 chips
-                    balance = balance + 300
-                    result.text = "🎉 You guessed correctly! +300 chips!"
-                    result.style = "text-2xl font-bold text-[#10b981] mb-8 text-center"
-                    winsCount = winsCount + 1
-                else
-                    -- Lose: lose 50 chips
-                    balance = balance - 50
-                    result.text = "❌ Wrong guess! You rolled " .. diceResult .. ". -50 chips"
-                    result.style = "text-2xl font-bold text-[#ef4444] mb-8 text-center"
-                    lossesCount = lossesCount + 1
-                end
-                
-                -- Update balance
-                gurt.crumbs.set({
-                    name = "balance",
-                    value = balance
-                })
-                local walletElement = gurt.select('#wallet-balance')
-                walletElement.text = balance
-                
-                totalRolls = totalRolls + 1
-                updateDisplay()
-                
-                rollButton.text = "Roll Dice"
-                isRolling = false
-                
-                trace.log("Dice roll result: " .. diceResult .. ", guess: " .. guess)
-            end, 1000)
-        end
-
-        -- Add click event listener
-        rollButton:on('click', rollDice)
-
-        -- Initialize random seed
-        math.randomseed(Time.now())
-
-        -- Initialize display
-        updateDisplay()
-
-        trace.log("Dice game initialized!")
-    </script>
-    <script>
-    -- Navigation event handlers
-    local navHome = gurt.select('#nav-home')
-    local navSlots = gurt.select('#nav-slots')
-    local navBlackjack = gurt.select('#nav-blackjack')
-    local navRoulette = gurt.select('#nav-roulette')
-    local navPoker = gurt.select('#nav-poker')
-    local navDice = gurt.select('#nav-dice')
-    local navCoinflip = gurt.select('#nav-coinflip')
-    
-    navHome:on('click', function() gurt.location.goto('/') end)
-    navSlots:on('click', function() gurt.location.goto('/slots') end)
-    navBlackjack:on('click', function() gurt.location.goto('/blackjack') end)
-    navRoulette:on('click', function() gurt.location.goto('/roulette') end)
-    navPoker:on('click', function() gurt.location.goto('/poker') end)
-    navDice:on('click', function() gurt.location.goto('/dice') end)
-    navCoinflip:on('click', function() gurt.location.goto('/coinflip') end)
-    </script>
+    <script src="../scripts/balance.lua"></script>
+    <script src="script.lua"></script>
+    <script src="../scripts/navigation.lua"></script>
 </head>
 <body style="bg-[#0a0a0a] text-white m-0 p-0 font-inter">
     <!-- Top Navigation Bar -->
@@ -167,7 +29,7 @@
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-slots">Slots</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-blackjack">Blackjack</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-roulette">Roulette</span>
-                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-poker">Poker</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-regex">regex</span>
                 <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-dice">Dice</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-coinflip">CoinFlip</span>
             </div>
@@ -180,7 +42,7 @@
                         G
                     </div>
                     <!-- Balance -->
-                    <span style="text-white font-bold" id="wallet-balance">test</span>
+                    <span style="text-white font-bold" id="wallet-balance">...</span>
                     <!-- Add Button -->
                     <button style="w-6 h-6 bg-[#555555] text-white text-sm font-bold cursor-pointer hover:bg-[#666666] border-none">
                         +

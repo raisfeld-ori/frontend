@@ -1,0 +1,16 @@
+-- Navigation event handlers
+local navHome = gurt.select('#nav-home')
+local navSlots = gurt.select('#nav-slots')
+local navBlackjack = gurt.select('#nav-blackjack')
+local navRoulette = gurt.select('#nav-roulette')
+local navregex = gurt.select('#nav-regex')
+local navDice = gurt.select('#nav-dice')
+local navCoinflip = gurt.select('#nav-coinflip')
+
+navHome:on('click', function() gurt.location.goto('/') end)
+navSlots:on('click', function() gurt.location.goto('/slots') end)
+navBlackjack:on('click', function() gurt.location.goto('/blackjack') end)
+navRoulette:on('click', function() gurt.location.goto('/roulette') end)
+navregex:on('click', function() gurt.location.goto('/regex') end)
+navDice:on('click', function() gurt.location.goto('/dice') end)
+navCoinflip:on('click', function() gurt.location.goto('/coinflip') end)

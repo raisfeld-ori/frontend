@@ -11,36 +11,8 @@
     <style>
         body { font-inter }
     </style>
-    <script>
-    local balance = gurt.crumbs.get("balance")
-    if balance == nil then
-        gurt.crumbs.set({
-            name = "balance",
-            value = 100
-        })
-        balance = 100
-    end
-    local element = gurt.select('#wallet-balance')
-    element.text = balance
-    </script>
-    <script>
-    -- Navigation event handlers
-    local navHome = gurt.select('#nav-home')
-    local navSlots = gurt.select('#nav-slots')
-    local navBlackjack = gurt.select('#nav-blackjack')
-    local navRoulette = gurt.select('#nav-roulette')
-    local navPoker = gurt.select('#nav-poker')
-    local navDice = gurt.select('#nav-dice')
-    local navCoinflip = gurt.select('#nav-coinflip')
-    
-    navHome:on('click', function() gurt.location.goto('/') end)
-    navSlots:on('click', function() gurt.location.goto('/slots') end)
-    navBlackjack:on('click', function() gurt.location.goto('/blackjack') end)
-    navRoulette:on('click', function() gurt.location.goto('/roulette') end)
-    navPoker:on('click', function() gurt.location.goto('/poker') end)
-    navDice:on('click', function() gurt.location.goto('/dice') end)
-    navCoinflip:on('click', function() gurt.location.goto('/coinflip') end)
-    </script>
+    <script src="scripts/balance.lua"></script>
+    <script src="scripts/navigation.lua"></script>
 </head>
 <body style="bg-[#0a0a0a] text-white m-0 p-0 font-inter">
     <!-- Top Navigation Bar -->
@@ -57,7 +29,7 @@
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-slots">Slots</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-blackjack">Blackjack</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-roulette">Roulette</span>
-                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-poker">Poker</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-regex">regex</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-dice">Dice</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-coinflip">CoinFlip</span>
             </div>
@@ -70,7 +42,7 @@
                         G
                     </div>
                     <!-- Balance -->
-                    <span style="text-white font-bold" id="wallet-balance">test</span>
+                    <span style="text-white font-bold" id="wallet-balance">...</span>
                     <!-- Add Button -->
                     <button style="w-6 h-6 bg-[#555555] text-white text-sm font-bold cursor-pointer hover:bg-[#666666] border-none">
                         +
@@ -101,8 +73,8 @@
                 <div href="/blackjack" style="w-48 h-64 bg-[#ec4899] rounded-lg border border-[#333333] cursor-pointer flex items-center justify-center mr-6 hover:bg-[#f472b6]">
                     <a href="/blackjack" style="text-white font-bold text-lg">BLACKJACK</a>
                 </div>
-                <div href="/poker" style="w-48 h-64 bg-[#10b981] rounded-lg border border-[#333333] cursor-pointer flex items-center justify-center mr-6 hover:bg-[#34d399]">
-                    <a href="/poker" style="text-white font-bold text-lg">POKER</a>
+                <div href="/regex" style="w-48 h-64 bg-[#10b981] rounded-lg border border-[#333333] cursor-pointer flex items-center justify-center mr-6 hover:bg-[#34d399]">
+                    <a href="/regex" style="text-white font-bold text-lg">regex</a>
                 </div>
                 <div href="/dice" style="w-48 h-64 bg-[#06b6d4] rounded-lg border border-[#333333] cursor-pointer flex items-center justify-center mr-6 hover:bg-[#22d3ee]">
                     <a href="/dice" style="text-white font-bold text-lg">DICE</a>

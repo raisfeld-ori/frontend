@@ -17,175 +17,9 @@
             min-h-screen
         }
     </style>
-            <script>
-    local balance = gurt.crumbs.get("balance")
-    if balance == nil then
-        gurt.crumbs.set({
-            name = "balance",
-            value = 100
-        })
-        balance = 100
-    end
-    local element = gurt.select('#wallet-balance')
-    element.text = balance
-    </script>
-    <script>
-        -- Coinflip Game Logic
-        local gameStats = {
-            wins = 0,
-            losses = 0,
-            total = 0
-        }
-        local isFlipping = false
-
-        -- Get DOM elements
-        local coin = gurt.select('#coin')
-        local result = gurt.select('#result')
-        local flipButton = gurt.select('#flipButton')
-        local choiceSelect = gurt.select('#choice-select')
-        local betInput = gurt.select('#bet-input')
-        local winsDisplay = gurt.select('#wins-count')
-        local lossesDisplay = gurt.select('#losses-count')
-        local totalDisplay = gurt.select('#total-count')
-
-        -- Update stats display
-        local function updateStats()
-            winsDisplay.text = tostring(gameStats.wins)
-            lossesDisplay.text = tostring(gameStats.losses)
-            totalDisplay.text = tostring(gameStats.total)
-        end
-
-        -- Main flip function
-        local function flipCoin()
-            if isFlipping then
-                return
-            end
-            
-            -- Get user inputs
-            local userChoice = choiceSelect.value
-            local betText = betInput.value
-            local betAmount = tonumber(betText)
-            local currentBalance = tonumber(gurt.crumbs.get("balance"))
-            
-            -- Validate inputs
-            if betAmount == nil or betAmount - 1 >= currentBalance or betAmount <= 0 then
-                result.text = "Enter a valid bet amount"
-                result.style = "text-2xl font-bold text-[#ef4444] mb-8"
-                return
-            end
-            
-            if currentBalance - 1 <= betAmount then
-                result.text = "Not enough balance"
-                result.style = "text-2xl font-bold text-[#ef4444] mb-8"
-                return
-            end
-            
-            -- Start flipping
-            isFlipping = true
-            flipButton.text = "Flipping..."
-            result.text = "Flipping..."
-            result.style = "text-2xl font-bold text-[#fbbf24] mb-8"
-            
-            -- Coin animation
-            local animCount = 0
-            local animation = setInterval(function()
-                animCount = animCount + 1
-                if animCount % 2 == 0 then
-                    coin.text = "6"
-                    coin.style = "w-[300px] h-[300px] rounded-full bg-[#ffd700] border-4 border-[#f59e0b] text-4xl font-bold text-[#92400e] cursor-pointer mx-auto flex items-center justify-center"
-                else
-                    coin.text = "7"
-                    coin.style = "w-[300px] h-[300px] rounded-full bg-[#d1d5db] border-4 border-[#9ca3af] text-4xl font-bold text-[#374151] cursor-pointer mx-auto flex items-center justify-center"
-                end
-            end, 100)
-            
-            -- Get random result
-            local coinResult = math.random(0, 1)
-            
-            -- Stop animation and show result
-            setTimeout(function()
-                clearInterval(animation)
-                
-                -- Check if user won
-                local won = false
-                if (userChoice == "6" and coinResult == 0) or (userChoice == "7" and coinResult == 1) then
-                    won = true
-                end
-                
-                -- Update balance
-                local newBalance = currentBalance
-                if won then
-                    newBalance = newBalance + betAmount
-                    gameStats.wins = gameStats.wins + 1
-                else
-                    newBalance = newBalance - betAmount
-                    gameStats.losses = gameStats.losses + 1
-                end
-                gameStats.total = gameStats.total + 1
-                
-                -- Save new balance
-                gurt.crumbs.set({
-                    name = "balance",
-                    value = newBalance
-                })
-                local balanceElement = gurt.select('#wallet-balance')
-                balanceElement.text = tostring(newBalance)
-                
-                -- Show final coin state
-                if coinResult == 0 then
-                    coin.text = "6"
-                    coin.style = "w-[300px] h-[300px] rounded-full bg-[#ffd700] border-4 border-[#f59e0b] text-4xl font-bold text-[#92400e] cursor-pointer mx-auto flex items-center justify-center"
-                else
-                    coin.text = "7"
-                    coin.style = "w-[300px] h-[300px] rounded-full bg-[#d1d5db] border-4 border-[#9ca3af] text-4xl font-bold text-[#374151] cursor-pointer mx-auto flex items-center justify-center"
-                end
-                
-                -- Show result message
-                if won then
-                    result.text = "You Won " .. betAmount .. " chips"
-                    result.style = "text-2xl font-bold text-[#10b981] mb-8"
-                else
-                    result.text = "You Lost " .. betAmount .. " chips"
-                    result.style = "text-2xl font-bold text-[#ef4444] mb-8"
-                end
-                
-                -- Update display
-                updateStats()
-                flipButton.text = "Flip Again"
-                isFlipping = false
-                
-                trace.log("Flip complete - Result: " .. (coinResult == 0 and "6" or "7") .. " Won: " .. tostring(won))
-            end, 1500)
-        end
-
-        -- Event listeners
-        flipButton:on('click', flipCoin)
-        coin:on('click', flipCoin)
-
-        -- Initialize
-        math.randomseed(Time.now())
-        updateStats()
-        
-        trace.log("Coinflip initialized")
-    </script>
-        <script>
-    -- Navigation event handlers
-    local navHome = gurt.select('#nav-home')
-    local navSlots = gurt.select('#nav-slots')
-    local navBlackjack = gurt.select('#nav-blackjack')
-    local navRoulette = gurt.select('#nav-roulette')
-    local navPoker = gurt.select('#nav-poker')
-    local navDice = gurt.select('#nav-dice')
-    local navCoinflip = gurt.select('#nav-coinflip')
-    
-    navHome:on('click', function() gurt.location.goto('/') end)
-    navSlots:on('click', function() gurt.location.goto('/slots') end)
-    navBlackjack:on('click', function() gurt.location.goto('/blackjack') end)
-    navRoulette:on('click', function() gurt.location.goto('/roulette') end)
-    navPoker:on('click', function() gurt.location.goto('/poker') end)
-    navDice:on('click', function() gurt.location.goto('/dice') end)
-    navCoinflip:on('click', function() gurt.location.goto('/coinflip') end)
-    </script>
+    <script src="../scripts/balance.lua"></script>
+    <script src="script.lua"></script>
+    <script src="../scripts/navigation.lua"></script>
 </head>
 <body>
      <!-- Top Navigation Bar -->
@@ -202,7 +36,7 @@
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-slots">Slots</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-blackjack">Blackjack</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-roulette">Roulette</span>
-                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-poker">Poker</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-regex">regex</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-dice">Dice</span>
                 <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-coinflip">CoinFlip</span>
             </div>
@@ -215,7 +49,7 @@
                         G
                     </div>
                     <!-- Balance -->
-                    <span style="text-white font-bold" id="wallet-balance">test</span>
+                    <span style="text-white font-bold" id="wallet-balance">...</span>
                     <!-- Add Button -->
                     <button style="w-6 h-6 bg-[#555555] text-white text-sm font-bold cursor-pointer hover:bg-[#666666] border-none">
                         +

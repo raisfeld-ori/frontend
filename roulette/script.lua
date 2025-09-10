@@ -388,13 +388,8 @@ local function spinRoulette()
         
         totalSpins = totalSpins + 1
         
-        -- Save balance
-        gurt.crumbs.set({
-            name = "balance",
-            value = newBalance
-        })
-        local balanceElement = gurt.select('#wallet-balance')
-        balanceElement.text = tostring(newBalance)
+        -- Update balance with animation
+        updateBalance(newBalance)
         
         updateStats()
         spinButton.text = "SPIN"
@@ -475,7 +470,7 @@ local function setupNavigation()
     local navSlots = gurt.select('#nav-slots')
     local navBlackjack = gurt.select('#nav-blackjack')
     local navRoulette = gurt.select('#nav-roulette')
-    local navPoker = gurt.select('#nav-poker')
+    local navregex = gurt.select('#nav-regex')
     local navDice = gurt.select('#nav-dice')
     local navCoinflip = gurt.select('#nav-coinflip')
     
@@ -483,7 +478,7 @@ local function setupNavigation()
     navSlots:on('click', function() gurt.location.goto('/slots') end)
     navBlackjack:on('click', function() gurt.location.goto('/blackjack') end)
     navRoulette:on('click', function() gurt.location.goto('/roulette') end)
-    navPoker:on('click', function() gurt.location.goto('/poker') end)
+    navregex:on('click', function() gurt.location.goto('/regex') end)
     navDice:on('click', function() gurt.location.goto('/dice') end)
     navCoinflip:on('click', function() gurt.location.goto('/coinflip') end)
 end
