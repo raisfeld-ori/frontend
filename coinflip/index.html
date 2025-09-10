@@ -31,110 +31,142 @@
     </script>
     <script>
         -- Coinflip Game Logic
-        local winsCount = 0
-        local SevenCount = 0
-        local totalFlips = 0
+        local gameStats = {
+            wins = 0,
+            losses = 0,
+            total = 0
+        }
         local isFlipping = false
 
         -- Get DOM elements
         local coin = gurt.select('#coin')
         local result = gurt.select('#result')
         local flipButton = gurt.select('#flipButton')
-        local winsDisplay = gurt.select('#winsCount')
-        local SevenDisplay = gurt.select('#SevenCount')
-        local totalDisplay = gurt.select('#totalFlips')
+        local choiceSelect = gurt.select('#choice-select')
+        local betInput = gurt.select('#bet-input')
+        local winsDisplay = gurt.select('#wins-count')
+        local lossesDisplay = gurt.select('#losses-count')
+        local totalDisplay = gurt.select('#total-count')
 
-        -- Function to update display
-        local function updateDisplay()
-            winsDisplay.text = tostring(winsCount)
-            SevenDisplay.text = tostring(SevenCount)
-            totalDisplay.text = tostring(totalFlips)
+        -- Update stats display
+        local function updateStats()
+            winsDisplay.text = tostring(gameStats.wins)
+            lossesDisplay.text = tostring(gameStats.losses)
+            totalDisplay.text = tostring(gameStats.total)
         end
 
-        -- Function to flip the coin
+        -- Main flip function
         local function flipCoin()
             if isFlipping then
                 return
             end
             
+            -- Get user inputs
+            local userChoice = choiceSelect.value
+            local betText = betInput.value
+            local betAmount = tonumber(betText)
+            local currentBalance = tonumber(gurt.crumbs.get("balance"))
+            
+            -- Validate inputs
+            if betAmount == nil or betAmount - 1 >= currentBalance or betAmount <= 0 then
+                result.text = "Enter a valid bet amount"
+                result.style = "text-2xl font-bold text-[#ef4444] mb-8"
+                return
+            end
+            
+            if currentBalance - 1 <= betAmount then
+                result.text = "Not enough balance"
+                result.style = "text-2xl font-bold text-[#ef4444] mb-8"
+                return
+            end
+            
+            -- Start flipping
             isFlipping = true
             flipButton.text = "Flipping..."
-            result.text = ""
+            result.text = "Flipping..."
+            result.style = "text-2xl font-bold text-[#fbbf24] mb-8"
             
-            -- Animate coin spinning by changing text rapidly
-            local spinCount = 0
-            local spinInterval = setInterval(function()
-                spinCount = spinCount + 1
-                if spinCount % 2 == 0 then
-                    coin.text = "Six"
-                    coin.style = "w-[300px] h-[300px] rounded-full bg-[#FFD700] border-4 border-[#FFA500] text-2xl font-bold text-[#8B4513] cursor-pointer mx-auto pt-[130px] text-center"
+            -- Coin animation
+            local animCount = 0
+            local animation = setInterval(function()
+                animCount = animCount + 1
+                if animCount % 2 == 0 then
+                    coin.text = "6"
+                    coin.style = "w-[300px] h-[300px] rounded-full bg-[#ffd700] border-4 border-[#f59e0b] text-4xl font-bold text-[#92400e] cursor-pointer mx-auto flex items-center justify-center"
                 else
-                    coin.text = "Seven"
-                    coin.style = "w-[300px] h-[300px] rounded-full bg-[#C0C0C0] border-4 border-[#A9A9A9] text-2xl font-bold text-[#2F4F4F] cursor-pointer mx-auto pt-[130px] text-center"
+                    coin.text = "7"
+                    coin.style = "w-[300px] h-[300px] rounded-full bg-[#d1d5db] border-4 border-[#9ca3af] text-4xl font-bold text-[#374151] cursor-pointer mx-auto flex items-center justify-center"
                 end
             end, 100)
             
-            -- Generate random result (0 = Six, 1 = Seven)
-            local flipResult = math.random(0, 1)
+            -- Get random result
+            local coinResult = math.random(0, 1)
             
-            -- Stop spinning and show final result after 1 second
+            -- Stop animation and show result
             setTimeout(function()
-                clearInterval(spinInterval)
+                clearInterval(animation)
                 
-                -- Set final result
-                if flipResult == 0 then
-                    local balance = gurt.crumbs.get("balance")
-                    balance = balance + 50
-                    gurt.crumbs.set({
-                        name = "balance",
-                        value = balance
-                    })
-                    local element = gurt.select('#wallet-balance')
-                    element.text = balance
-                    -- Six
-                    coin.text = "Six"
-                    coin.style = "w-[300px] h-[300px] rounded-full bg-[#FFD700] border-4 border-[#FFA500] text-2xl font-bold text-[#8B4513] cursor-pointer mx-auto pt-[130px] text-center"
-                    result.text = "🎉 Six Six!"
-                    result.style = "text-3xl font-bold text-[#FFD700] mb-8 mx-auto text-center"
-                    winsCount = winsCount + 1
-                else
-                    -- Seven 
-                    local balance = gurt.crumbs.get("balance")
-                    balance = balance - 50
-                    gurt.crumbs.set({
-                        name = "balance",
-                        value = balance
-                    })
-                    local element = gurt.select('#wallet-balance')
-                    element.text = balance
-                    coin.text = "Seven"
-                    coin.style = "w-[300px] h-[300px] rounded-full bg-[#C0C0C0] border-4 border-[#A9A9A9] text-2xl font-bold text-[#2F4F4F] cursor-pointer mx-auto pt-[130px] text-center"
-                    result.text = "🎉 Six Seven!"
-                    result.style = "text-3xl font-bold text-[#C0C0C0] mb-8 mx-auto text-center"
-                    SevenCount = SevenCount + 1
+                -- Check if user won
+                local won = false
+                if (userChoice == "6" and coinResult == 0) or (userChoice == "7" and coinResult == 1) then
+                    won = true
                 end
                 
-                totalFlips = totalFlips + 1
-                updateDisplay()
+                -- Update balance
+                local newBalance = currentBalance
+                if won then
+                    newBalance = newBalance + betAmount
+                    gameStats.wins = gameStats.wins + 1
+                else
+                    newBalance = newBalance - betAmount
+                    gameStats.losses = gameStats.losses + 1
+                end
+                gameStats.total = gameStats.total + 1
                 
+                -- Save new balance
+                gurt.crumbs.set({
+                    name = "balance",
+                    value = newBalance
+                })
+                local balanceElement = gurt.select('#wallet-balance')
+                balanceElement.text = tostring(newBalance)
+                
+                -- Show final coin state
+                if coinResult == 0 then
+                    coin.text = "6"
+                    coin.style = "w-[300px] h-[300px] rounded-full bg-[#ffd700] border-4 border-[#f59e0b] text-4xl font-bold text-[#92400e] cursor-pointer mx-auto flex items-center justify-center"
+                else
+                    coin.text = "7"
+                    coin.style = "w-[300px] h-[300px] rounded-full bg-[#d1d5db] border-4 border-[#9ca3af] text-4xl font-bold text-[#374151] cursor-pointer mx-auto flex items-center justify-center"
+                end
+                
+                -- Show result message
+                if won then
+                    result.text = "You Won " .. betAmount .. " chips"
+                    result.style = "text-2xl font-bold text-[#10b981] mb-8"
+                else
+                    result.text = "You Lost " .. betAmount .. " chips"
+                    result.style = "text-2xl font-bold text-[#ef4444] mb-8"
+                end
+                
+                -- Update display
+                updateStats()
                 flipButton.text = "Flip Again"
                 isFlipping = false
                 
-                trace.log("Coin flip result: " .. (flipResult == 0 and "Six" or "Seven"))
-            end, 1000)
+                trace.log("Flip complete - Result: " .. (coinResult == 0 and "6" or "7") .. " Won: " .. tostring(won))
+            end, 1500)
         end
 
-        -- Add click event listeners
+        -- Event listeners
         flipButton:on('click', flipCoin)
         coin:on('click', flipCoin)
 
-        -- Initialize math random seed
+        -- Initialize
         math.randomseed(Time.now())
-
-        -- Initialize display
-        updateDisplay()
-
-        trace.log("Coinflip game initialized!")
+        updateStats()
+        
+        trace.log("Coinflip initialized")
     </script>
         <script>
     -- Navigation event handlers
@@ -198,7 +230,7 @@
         <div style="w-full max-w-4xl mx-auto text-center pt-16">
             <!-- Game Title -->
             <h1 style="text-6xl font-bold text-white mb-4 mx-auto">Coinflip</h1>
-            <p style="text-xl text-[#888888] mb-16 mx-auto">Click the coin or button to flip! Each flip gives you 50 chips or losses 50 chips</p>
+            <p style="text-xl text-[#888888] mb-16 mx-auto">Click the coin or button to flip!</p>
             
             <!-- Coin Container -->
             <div style="mb-16">
@@ -206,7 +238,25 @@
                     GURT
                 </div>
             </div>
+
+            <!-- Game Controls -->
+            <div style="mb-12">
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 max-w-md mx-auto">
+                    <div style="mb-4">
+                        <p style="text-lg font-medium text-white mb-2">Choose your prediction:</p>
+                        <select id="choice-select" style="w-full p-3 bg-[#2a2a2a] border border-[#444444] rounded-lg text-white">
+                            <option value="option1">6</option>
+                            <option value="option2">7</option>
+                        </select>
+                    </div>
+                    <div id="origin-container" style="flex flex-col gap-2">
+                        <p id="origin-text" style="text-lg font-medium text-white mb-2">Chips to be bet:</p>
+                        <input id="bet-input" type="number" placeholder="0" style="text-white" />
+                    </div>
+                </div>
+            </div>
             
+
             <!-- Result Display -->
             <div id="result" style="text-3xl font-bold text-white mb-12 min-h-[3rem] mx-auto text-center"></div>
             
@@ -218,16 +268,16 @@
             <!-- Stats Grid -->
             <div style="max-w-3xl mx-auto mb-12 text-center overflow-hidden">
                 <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
-                    <div style="text-3xl font-bold text-[#FFD700] mb-2" id="winsCount">0</div>
-                    <div style="text-[#888888] text-lg">Six</div>
+                    <div style="text-3xl font-bold text-[#10b981] mb-2" id="wins-count">0</div>
+                    <div style="text-[#888888] text-lg">Wins</div>
                 </div>
                 <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
-                    <div style="text-3xl font-bold text-[#C0C0C0] mb-2" id="SevenCount">0</div>
-                    <div style="text-[#888888] text-lg">Seven</div>
+                    <div style="text-3xl font-bold text-[#ef4444] mb-2" id="losses-count">0</div>
+                    <div style="text-[#888888] text-lg">Losses</div>
                 </div>
                 <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
-                    <div style="text-3xl font-bold text-white mb-2" id="totalFlips">0</div>
-                    <div style="text-[#888888] text-lg">Total Flips</div>
+                    <div style="text-3xl font-bold text-white mb-2" id="total-count">0</div>
+                    <div style="text-[#888888] text-lg">Total</div>
                 </div>
             </div>
             

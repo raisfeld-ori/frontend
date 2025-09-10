@@ -11,7 +11,7 @@
         body { font-inter }
     </style>
     <script>
-    local balance = gurt.crumbs.get("balance")
+    local balance = tonumber(gurt.crumbs.get("balance"))
     if balance == nil then
         gurt.crumbs.set({
             name = "balance",
@@ -21,6 +21,117 @@
     end
     local element = gurt.select('#wallet-balance')
     element.text = balance
+    </script>
+    <script>
+        -- Dice Game Logic
+        local winsCount = 0
+        local lossesCount = 0
+        local totalRolls = 0
+        local isRolling = false
+
+        -- Get DOM elements
+        local diceDisplay = gurt.select('#dice-display')
+        local guessInput = gurt.select('#origin')
+        local rollButton = gurt.select('#roll-button')
+        local result = gurt.select('#result')
+        local winsDisplay = gurt.select('#wins-count')
+        local lossesDisplay = gurt.select('#losses-count')
+        local totalDisplay = gurt.select('#total-rolls')
+
+        -- Function to update stats display
+        local function updateDisplay()
+            winsDisplay.text = tostring(winsCount)
+            lossesDisplay.text = tostring(lossesCount)
+            totalDisplay.text = tostring(totalRolls)
+        end
+
+        -- Function to roll the dice
+        local function rollDice()
+            if isRolling then
+                return
+            end
+
+            -- Get user's guess
+            local guess = tonumber(guessInput.value)
+            if guess == nil or guess < 1 or guess > 6 then
+                result.text = "Please enter a number between 1 and 6!"
+                result.style = "text-2xl font-bold text-[#ef4444] mb-8 text-center"
+                return
+            end
+
+            -- Check if user has enough balance for the bet
+            local balance = tonumber(gurt.crumbs.get("balance"))
+            if balance < 50 then
+                result.text = "Insufficient balance! You need at least 50 chips to play."
+                result.style = "text-2xl font-bold text-[#ef4444] mb-8 text-center"
+                return
+            end
+            
+            isRolling = true
+            rollButton.text = "Rolling..."
+            result.text = ""
+            
+            -- Animate dice rolling by changing numbers rapidly
+            local rollCount = 0
+            local rollInterval = setInterval(function()
+                rollCount = rollCount + 1
+                local animNumber = math.random(1, 6)
+                diceDisplay.text = tostring(animNumber)
+            end, 100)
+            
+            -- Generate final dice result (1-6)
+            local diceResult = math.random(1, 6)
+            
+            -- Stop rolling animation and show final result after 1 second
+            setTimeout(function()
+                clearInterval(rollInterval)
+                
+                -- Show final dice result
+                diceDisplay.text = tostring(diceResult)
+                
+                -- Check if guess matches dice result
+                if guess == diceResult then
+                    -- Win: give 300 chips
+                    balance = balance + 300
+                    result.text = "🎉 You guessed correctly! +300 chips!"
+                    result.style = "text-2xl font-bold text-[#10b981] mb-8 text-center"
+                    winsCount = winsCount + 1
+                else
+                    -- Lose: lose 50 chips
+                    balance = balance - 50
+                    result.text = "❌ Wrong guess! You rolled " .. diceResult .. ". -50 chips"
+                    result.style = "text-2xl font-bold text-[#ef4444] mb-8 text-center"
+                    lossesCount = lossesCount + 1
+                end
+                
+                -- Update balance
+                gurt.crumbs.set({
+                    name = "balance",
+                    value = balance
+                })
+                local walletElement = gurt.select('#wallet-balance')
+                walletElement.text = balance
+                
+                totalRolls = totalRolls + 1
+                updateDisplay()
+                
+                rollButton.text = "Roll Dice"
+                isRolling = false
+                
+                trace.log("Dice roll result: " .. diceResult .. ", guess: " .. guess)
+            end, 1000)
+        end
+
+        -- Add click event listener
+        rollButton:on('click', rollDice)
+
+        -- Initialize random seed
+        math.randomseed(Time.now())
+
+        -- Initialize display
+        updateDisplay()
+
+        trace.log("Dice game initialized!")
     </script>
     <script>
     -- Navigation event handlers
@@ -80,10 +191,54 @@
     </div>
 
     <!-- Main Content Area -->
-    <div style="min-h-screen flex items-center justify-center p-8">
-        <div style="text-center">
-            <h1 style="text-4xl font-bold text-white mb-4">Dice Game</h1>
-            <p style="text-xl text-[#888888]">Incomplete: I didn't finish this page in time ):</p>
+    <div style="min-h-[calc(100vh-80px)] p-8">
+        <div style="w-full max-w-4xl mx-auto text-center pt-16">
+            <!-- Game Title -->
+            <h1 style="text-6xl font-bold text-white mb-4 mx-auto">Dice Game</h1>
+            <p style="text-xl text-[#888888] mb-16 mx-auto">Guess the dice roll (1-6)! Win: +300 chips, Lose: -50 chips</p>
+            
+            <!-- Dice Display -->
+            <div style="mb-16">
+                <p id="dice-display" style="w-[200px] h-[200px] border-4 border-[#444444] rounded-xl flex items-center justify-center text-6xl font-bold text-[#333333] mx-auto">
+                   ?
+                </p>
+            </div>
+            
+            <!-- Input and Roll Section -->
+                <div id="origin-container" style="flex flex-col gap-2">
+                    <p id="origin-text" style="block text-sm font-medium text-[#f8f8f8]">Pick a number (1-6)</p>
+                    <input id="origin" type="number" style="text-[#f8f8f8]" placeholder="Enter 1-6" min="1" max="6" />
+                </div>
+                
+                <!-- Roll Button -->
+                <button id="roll-button" style="bg-[#7c3aed] text-white px-12 py-6 rounded-xl text-2xl font-bold cursor-pointer hover:bg-[#8b5cf6] border-none">
+                    Roll Dice
+                </button>
+            </div>
+            
+            <!-- Result Display -->
+            <div id="result" style="text-2xl font-bold text-white mb-12 min-h-[3rem] text-center"></div>
+            
+            <!-- Stats Grid -->
+            <div style="max-w-3xl mx-auto mb-12 text-center overflow-hidden">
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
+                    <div style="text-3xl font-bold text-[#10b981] mb-2" id="wins-count">0</div>
+                    <div style="text-[#888888] text-lg">Wins</div>
+                </div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
+                    <div style="text-3xl font-bold text-[#ef4444] mb-2" id="losses-count">0</div>
+                    <div style="text-[#888888] text-lg">Losses</div>
+                </div>
+                <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
+                    <div style="text-3xl font-bold text-white mb-2" id="total-rolls">0</div>
+                    <div style="text-[#888888] text-lg">Total Rolls</div>
+                </div>
+            </div>
+            
+            <!-- Back to Games -->
+            <div style="text-center mx-auto">
+                <a href="/" style="text-[#7c3aed] hover:text-[#8b5cf6] cursor-pointer text-xl text-decoration-none">← Back to Games</a>
+            </div>
         </div>
     </div>
 </body>
