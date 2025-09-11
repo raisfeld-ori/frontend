@@ -320,11 +320,6 @@ end
 local function generateChallenge()
     local currentBalance = tonumber(gurt.crumbs.get("balance"))
     
-    -- Check if player has enough balance
-    if currentBalance < 10 then
-        if result then result.text = "Not enough chips! Need 10 chips to play" end
-        return
-    end
     
     -- Pick a random regex challenge
     local challengeIndex = math.random(1, #regexChallenges)
