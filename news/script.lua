@@ -67,45 +67,90 @@ local function getNewsCategory(title, text)
     end
 end
 
--- Function to create news article HTML
+-- Function to create news article element
 local function createNewsArticle(article)
     if not article or not article.title then
-        return ''
+        return nil
     end
     
     local category = getNewsCategory(article.title, article.text)
     local timeAgo = formatPublishDate(article.publish_date)
     local summary = article.summary or (article.text and article.text:sub(1, 200) .. '...') or 'No summary available.'
-    local authorTag = ''
     
+    -- Create main article container
+    local articleDiv = gurt.create('div', {
+        style = 'bg-[#1a1a1a] p-6 rounded-lg border border-[#333333] hover:border-[#555555] transition-colors mb-6 shadow-lg'
+    })
+    
+    -- Create header section
+    local headerDiv = gurt.create('div', {
+        style = 'flex justify-between items-start mb-4'
+    })
+    
+    -- Create title
+    local titleH2 = gurt.create('h2', {
+        style = 'text-2xl font-bold text-white mb-2 line-height-tight',
+        text = tostring(article.title or 'Untitled')
+    })
+    
+    -- Create time span
+    local timeSpan = gurt.create('span', {
+        style = 'text-[#888888] text-sm whitespace-nowrap ml-4',
+        text = tostring(timeAgo)
+    })
+    
+    headerDiv:append(titleH2)
+    headerDiv:append(timeSpan)
+    
+    -- Create summary paragraph
+    local summaryP = gurt.create('p', {
+        style = 'text-[#cccccc] mb-4 line-height-7',
+        text = tostring(summary)
+    })
+    
+    -- Create footer section
+    local footerDiv = gurt.create('div', {
+        style = 'flex justify-between items-center'
+    })
+    
+    -- Create tags container
+    local tagsDiv = gurt.create('div', {
+        style = 'flex gap-2'
+    })
+    
+    -- Create category tag
+    local categorySpan = gurt.create('span', {
+        style = 'bg-[' .. tostring(category.color) .. '] text-white px-3 py-1 rounded-full text-sm',
+        text = tostring(category.name)
+    })
+    tagsDiv:append(categorySpan)
+    
+    -- Create author tag if available
     if article.author and article.author ~= '' then
-        authorTag = string.format('<span style="bg-[#4b5563] text-white px-3 py-1 rounded-full text-sm">%s</span>', tostring(article.author))
+        local authorSpan = gurt.create('span', {
+            style = 'bg-[#555555] text-white px-3 py-1 rounded-full text-sm',
+            text = tostring(article.author)
+        })
+        tagsDiv:append(authorSpan)
     end
     
-    return string.format([[
-        <div style="bg-[#1a1a1a] p-6 rounded-lg border border-[#333333] hover:border-[#555555] transition-colors mb-6">
-            <div style="flex justify-between items-start mb-4">
-                <h2 style="text-2xl font-bold text-white mb-2 line-height-tight">%s</h2>
-                <span style="text-[#888888] text-sm whitespace-nowrap ml-4">%s</span>
-            </div>
-            <p style="text-[#cccccc] mb-4 line-height-7">%s</p>
-            <div style="flex justify-between items-center">
-                <div style="flex gap-2">
-                    <span style="bg-[%s] text-white px-3 py-1 rounded-full text-sm">%s</span>
-                    %s
-                </div>
-                <a href="%s" target="_blank" style="text-[#7c3aed] hover:text-[#8b5cf6] text-sm font-medium no-underline">Read More →</a>
-            </div>
-        </div>
-    ]], 
-        tostring(article.title or 'Untitled'),
-        tostring(timeAgo),
-        tostring(summary),
-        tostring(category.color),
-        tostring(category.name),
-        tostring(authorTag),
-        tostring(article.url or '#')
-    )
+    -- Create read more link
+    local readMoreLink = gurt.create('a', {
+        style = 'text-[#7c3aed] hover:text-[#8b5cf6] text-sm font-medium no-underline',
+        text = 'Read More →'
+    })
+    readMoreLink:setAttribute('href', tostring(article.url or '#'))
+    readMoreLink:setAttribute('target', '_blank')
+    
+    footerDiv:append(tagsDiv)
+    footerDiv:append(readMoreLink)
+    
+    -- Assemble the article
+    articleDiv:append(headerDiv)
+    articleDiv:append(summaryP)
+    articleDiv:append(footerDiv)
+    
+    return articleDiv
 end
 
 -- Function to show loading state
@@ -126,31 +171,56 @@ end
 local function showError(message)
     trace.log('showError: ' .. tostring(message))
     if newsContainer then
-        local errorHtml = string.format([[
-            <div style="bg-[#dc2626] p-4 rounded-lg border border-[#991b1b] text-center mb-6">
-                <h3 style="text-white font-bold mb-2">Error Loading News</h3>
-                <p style="text-white">%s</p>
-                <button onclick="window.location.reload()" style="bg-white text-[#dc2626] px-4 py-2 rounded mt-3 font-bold cursor-pointer border-none">
-                    Try Again
-                </button>
-            </div>
-        ]], message or 'Unknown error occurred')
+        -- Clear existing content
+        newsContainer.text = ''
         
-        if currentPage == 1 then
-            newsContainer.body = errorHtml
-        else
-            newsContainer.body = (newsContainer.body or '') .. errorHtml
-        end
+        -- Create error container
+        local errorDiv = gurt.create('div', {
+            style = 'bg-[#dc2626] p-4 rounded-lg border border-[#991b1b] text-center mb-6'
+        })
+        
+        -- Create error title
+        local errorTitle = gurt.create('h3', {
+            style = 'text-white font-bold mb-2',
+            text = 'Error Loading News'
+        })
+        
+        -- Create error message
+        local errorMessage = gurt.create('p', {
+            style = 'text-white',
+            text = tostring(message or 'Unknown error occurred')
+        })
+        
+        -- Create try again button
+        local tryAgainBtn = gurt.create('button', {
+            style = 'bg-white text-[#dc2626] px-4 py-2 rounded mt-3 font-bold cursor-pointer border-none',
+            text = 'Try Again'
+        })
+        
+        tryAgainBtn:on('click', function()
+            gurt.location.reload()
+        end)
+        
+        errorDiv:append(errorTitle)
+        errorDiv:append(errorMessage)
+        errorDiv:append(tryAgainBtn)
+        
+        newsContainer:append(errorDiv)
     end
 end
 
 -- Function to show "No news today" message
 local function showNoNewsToday()
     trace.log('showNoNewsToday: Displaying no news message')
+    
+    local noNewsElement = gurt.select("#no-news-message")
+    if noNewsElement then
+        noNewsElement.visible = true
+    end
+    
+    -- Hide news container content
     if newsContainer then
-        local noNewsHtml = gurt.select("#no-news-message")
-
-        noNewsHtml.visible = true
+        newsContainer.text = ''
     end
 end
 
@@ -163,13 +233,19 @@ local function displayNews(topNews)
         return
     end
     
+    -- Hide no news message
+    local noNewsElement = gurt.select("#no-news-message")
+    if noNewsElement then
+        noNewsElement.visible = false
+    end
+    
     if not topNews or #topNews == 0 then
         trace.log('displayNews: No news data provided')
         showNoNewsToday()
         return
     end
     
-    local articlesHtml = ''
+    local articles = {}
     local articleCount = 0
     
     -- Process each news cluster
@@ -178,12 +254,15 @@ local function displayNews(topNews)
             -- Take the first article from each cluster (highest ranked)
             local article = cluster.news[1]
             if article and article.title then
-                articlesHtml = articlesHtml .. createNewsArticle(article)
-                articleCount = articleCount + 1
-                
-                -- Limit to 10 articles per load
-                if articleCount >= 10 then
-                    break
+                local articleElement = createNewsArticle(article)
+                if articleElement then
+                    table.insert(articles, articleElement)
+                    articleCount = articleCount + 1
+                    
+                    -- Limit to 10 articles per load
+                    if articleCount >= 10 then
+                        break
+                    end
                 end
             end
         end
@@ -191,11 +270,22 @@ local function displayNews(topNews)
     
     if articleCount > 0 then
         trace.log('displayNews: Displaying ' .. tostring(articleCount) .. ' articles')
-        -- If this is the first page, replace content; otherwise append
+        -- If this is the first page, clear and add; otherwise append
         if currentPage == 1 then
-            newsContainer.body = articlesHtml
-        else
-            newsContainer.body = (newsContainer.body or '') .. articlesHtml
+            newsContainer.text = ''
+        end
+        
+        -- Append all articles with separators
+        for i, articleElement in ipairs(articles) do
+            newsContainer:append(articleElement)
+            
+            -- Add separator line between articles (except after the last one)
+            if i < #articles then
+                local separator = gurt.create('div', {
+                    style = 'border-b border-[#444444] mx-4 mb-6 opacity-50'
+                })
+                newsContainer:append(separator)
+            end
         end
     else
         trace.log('displayNews: No valid articles found')
@@ -277,9 +367,10 @@ end
 local function initNews()
     trace.log('initNews: Starting initialization')
 
-    local noNewsHtml = gurt.select("#no-news-message")
-
-    noNewsHtml.visible = false
+    local noNewsElement = gurt.select("#no-news-message")
+    if noNewsElement then
+        noNewsElement.visible = false
+    end
     
     -- Get DOM elements
     loadMoreBtn = gurt.select('#load-more-btn')
