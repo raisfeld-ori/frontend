@@ -18,6 +18,7 @@ local totalChallenges = 0
 
 -- Regex patterns and test cases
 local regexChallenges = {
+    -- Basic patterns
     {
         pattern = "^[a-z]+$",
         testCases = {
@@ -96,6 +97,197 @@ local regexChallenges = {
             {text = "Visit USA today", matches = true},
             {text = "usa", matches = false},
             {text = "A", matches = false}
+        }
+    },
+    -- Advanced patterns - much more challenging!
+    {
+        pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+        testCases = {
+            {text = "Password123!", matches = true},
+            {text = "MySecure1@", matches = true},
+            {text = "password123", matches = false},
+            {text = "PASSWORD123!", matches = false},
+            {text = "Pass1!", matches = false}
+        }
+    },
+    {
+        pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+        testCases = {
+            {text = "user.name+tag@example.co.uk", matches = true},
+            {text = "test_123@sub.domain.org", matches = true},
+            {text = "invalid@.com", matches = false},
+            {text = "user@domain.", matches = false},
+            {text = "@domain.com", matches = false}
+        }
+    },
+    {
+        pattern = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$",
+        testCases = {
+            {text = "2023-12-25", matches = true},
+            {text = "2024-02-29", matches = true},
+            {text = "2023-13-25", matches = false},
+            {text = "2023-12-32", matches = false},
+            {text = "23-12-25", matches = false}
+        }
+    },
+    {
+        pattern = "^((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)$",
+        testCases = {
+            {text = "192.168.1.1", matches = true},
+            {text = "255.255.255.255", matches = true},
+            {text = "256.1.1.1", matches = false},
+            {text = "192.168.1", matches = false},
+            {text = "192.168.01.1", matches = true}
+        }
+    },
+    {
+        pattern = "^[+]?[(]?[\\d\\s\\-\\(\\)]{10,}$",
+        testCases = {
+            {text = "+1 (555) 123-4567", matches = true},
+            {text = "(555) 123-4567", matches = true},
+            {text = "555-123-4567", matches = true},
+            {text = "555 123 4567", matches = true},
+            {text = "123456789", matches = false}
+        }
+    },
+    {
+        pattern = "^(?:https?:\\/\\/)?(?:www\\.)?[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(?:\\/[^\\s]*)?$",
+        testCases = {
+            {text = "https://www.example.com/path", matches = true},
+            {text = "http://example.com", matches = true},
+            {text = "www.example.com", matches = true},
+            {text = "example.com/path?param=value", matches = true},
+            {text = "not-a-url", matches = false}
+        }
+    },
+    {
+        pattern = "^[A-Z]{1,2}\\d{1,4}\\s?\\d[A-Z]{2}$",
+        testCases = {
+            {text = "SW1A 1AA", matches = true},
+            {text = "M1 1AA", matches = true},
+            {text = "B33 8TH", matches = true},
+            {text = "12345", matches = false},
+            {text = "SW1A1AA", matches = true}
+        }
+    },
+    {
+        pattern = "^[A-Z]{2}\\d{2}\\s?[A-Z]{4}\\s?\\d{2}$",
+        testCases = {
+            {text = "GB29 NWBK 6016 1331 9268 19", matches = false},
+            {text = "AB12 CDEF 34", matches = true},
+            {text = "XY99WXYZ56", matches = true},
+            {text = "AB1234567890", matches = false},
+            {text = "ab12 cdef 34", matches = false}
+        }
+    },
+    {
+        pattern = "^(?=.*[a-z].*[a-z])(?=.*[A-Z].*[A-Z])(?=.*\\d.*\\d)(?=.*[!@#$%^&*()].*[!@#$%^&*()])\\S{12,}$",
+        testCases = {
+            {text = "MyVerySecure123!@#", matches = true},
+            {text = "ANOTHER-Strong99$$", matches = true},
+            {text = "WeakPassword1!", matches = false},
+            {text = "Strong123!@", matches = false},
+            {text = "TooShort1!", matches = false}
+        }
+    },
+    {
+        pattern = "^\\d{1,3}(,\\d{3})*(\\.\\d{2})?$",
+        testCases = {
+            {text = "1,234,567.89", matches = true},
+            {text = "999", matches = true},
+            {text = "12,345", matches = true},
+            {text = "1234", matches = false},
+            {text = "1,23,456", matches = false}
+        }
+    },
+    {
+        pattern = "^([01]?\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?$",
+        testCases = {
+            {text = "23:59:59", matches = true},
+            {text = "09:30", matches = true},
+            {text = "1:05", matches = true},
+            {text = "24:00", matches = false},
+            {text = "12:60", matches = false}
+        }
+    },
+    {
+        pattern = "^(?=[MDCLXVI])M{0,4}(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})$",
+        testCases = {
+            {text = "MCMXC", matches = true},
+            {text = "MMXXIII", matches = true},
+            {text = "IV", matches = true},
+            {text = "IIII", matches = false},
+            {text = "ABC", matches = false}
+        }
+    },
+    {
+        pattern = "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+        testCases = {
+            {text = "550e8400-e29b-41d4-a716-446655440000", matches = true},
+            {text = "6ba7b810-9dad-11d1-80b4-00c04fd430c8", matches = true},
+            {text = "550e8400-e29b-41d4-a716-44665544000", matches = false},
+            {text = "550e8400e29b41d4a716446655440000", matches = false},
+            {text = "not-a-uuid", matches = false}
+        }
+    },
+    {
+        pattern = "^[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?$",
+        testCases = {
+            {text = "123.456", matches = true},
+            {text = "-3.14159", matches = true},
+            {text = "1.23e-4", matches = true},
+            {text = ".5", matches = true},
+            {text = "not_a_number", matches = false}
+        }
+    },
+    {
+        pattern = "^\\s*[a-zA-Z_$][a-zA-Z0-9_$]*\\s*=\\s*(?:\"[^\"]*\"|'[^']*'|[^;]+);\\s*$",
+        testCases = {
+            {text = "var name = \"John\";", matches = true},
+            {text = "  $value = 123;  ", matches = true},
+            {text = "_test = 'hello';", matches = true},
+            {text = "123invalid = \"test\";", matches = false},
+            {text = "name = value", matches = false}
+        }
+    },
+    {
+        pattern = "^[A-Za-z0-9+/]{4}*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+        testCases = {
+            {text = "SGVsbG8gV29ybGQ=", matches = true},
+            {text = "dGVzdA==", matches = true},
+            {text = "YWJjZGVm", matches = true},
+            {text = "invalid base64!", matches = false},
+            {text = "SGVsbG8gV29ybGQ", matches = false}
+        }
+    },
+    {
+        pattern = "^(?:\\+?1[-. ]?)?\\(?([0-9]{3})\\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$",
+        testCases = {
+            {text = "+1 (555) 123-4567", matches = true},
+            {text = "555.123.4567", matches = true},
+            {text = "(555) 123 4567", matches = true},
+            {text = "15551234567", matches = true},
+            {text = "555-123-456", matches = false}
+        }
+    },
+    {
+        pattern = "^\\s*<\\s*([a-zA-Z][a-zA-Z0-9-]*)\\s*(?:[^>]*)>.*</\\s*\\1\\s*>\\s*$",
+        testCases = {
+            {text = "<div>content</div>", matches = true},
+            {text = "<p class=\"test\">text</p>", matches = true},
+            {text = "  <span>  data  </span>  ", matches = true},
+            {text = "<div>content</span>", matches = false},
+            {text = "<img src=\"test.jpg\">", matches = false}
+        }
+    },
+    {
+        pattern = "^(?=.*\\w)(?=.*[.,!?;:])(?=.*\\s)[\\w\\s.,!?;:]{20,}$",
+        testCases = {
+            {text = "This is a complete sentence with punctuation!", matches = true},
+            {text = "Another valid example; it has many words.", matches = true},
+            {text = "Short text!", matches = false},
+            {text = "No punctuation here", matches = false},
+            {text = "Nospaces,butpunctuation!", matches = false}
         }
     }
 }
