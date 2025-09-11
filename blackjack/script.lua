@@ -130,11 +130,6 @@ local function dealCards()
         return
     end
     
-    -- Play cards sound effect when starting a new game
-    local cardsAudio = gurt.select('#cards-audio')
-    if cardsAudio then
-        cardsAudio:play()
-    end
     
     initializeDeck()
     playerCards = {}
@@ -158,56 +153,6 @@ local function dealCards()
         stand()
     else
         updateGameStatus("Your turn! Hit or Stand?")
-    end
-    
-    -- Show/hide buttons
-    dealButton.style = "display: none"
-    hitButton.style = "display: inline-block; bg-[#10b981] text-white px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#059669] border-none"
-    standButton.style = "display: inline-block; bg-[#ef4444] text-white px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#dc2626] border-none"
-end
-
--- End game function
-local function endGame(playerWon)
-    local balance = tonumber(gurt.crumbs.get("balance"))
-    
-    if playerWon == true then
-        -- Player wins
-        balance = balance + currentBet
-        gamesWon = gamesWon + 1
-    elseif playerWon == false then
-        -- Player loses
-        balance = balance - currentBet
-        gamesLost = gamesLost + 1
-    end
-    -- If tie (nil), no money change
-    
-    totalGames = totalGames + 1
-    
-    -- Update balance with animation
-    updateBalance(balance)
-    
-    updateStats()
-    
-    -- Show new game button
-    hitButton.style = "display: none"
-    standButton.style = "display: none"
-    newGameButton.style = "display: inline-block; bg-[#7c3aed] text-white px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#8b5cf6] border-none"
-end
-
--- Hit function
-local function hit()
-    if gameState ~= "playing" then return end
-    
-    table.insert(playerCards, table.remove(deck))
-    displayCards(playerCards, playerCardsEl, false)
-    updateScores()
-    
-    if playerScore > 21 then
-        gameState = "finished"
-        updateGameStatus("Bust! You lose!")
-        endGame(false)
-    elseif playerScore == 21 then
-        stand()
     end
 end
 
@@ -242,6 +187,46 @@ local function stand()
     else
         updateGameStatus("Push! It's a tie!")
         endGame(nil) -- tie
+    end
+end
+
+-- End game function
+local function endGame(playerWon)
+    local balance = tonumber(gurt.crumbs.get("balance"))
+    
+    if playerWon == true then
+        -- Player wins
+        balance = balance + currentBet
+        gamesWon = gamesWon + 1
+    elseif playerWon == false then
+        -- Player loses
+        balance = balance - currentBet
+        gamesLost = gamesLost + 1
+    end
+    -- If tie (nil), no money change
+    
+    totalGames = totalGames + 1
+    
+    -- Update balance with animation
+    updateBalance(balance)
+    
+    updateStats()
+end
+
+-- Hit function
+local function hit()
+    if gameState ~= "playing" then return end
+    
+    table.insert(playerCards, table.remove(deck))
+    displayCards(playerCards, playerCardsEl, false)
+    updateScores()
+    
+    if playerScore > 21 then
+        gameState = "finished"
+        updateGameStatus("Bust! You lose!")
+        endGame(false)
+    elseif playerScore == 21 then
+        stand()
     end
 end
 

@@ -57,7 +57,7 @@ local function flipCoin()
     -- Play coin flip sound effect
     local coinFlipAudio = gurt.select('#coin-flip-audio')
     if coinFlipAudio then
-        coinFlipAudio.src = "gurt://" .. gurt.location.href .. "/coin-flip.mp3"  -- Ensure the source is set
+        coinFlipAudio.src = "gurt://coin-flip.mp3"
         coinFlipAudio:play()
     end
     
