@@ -35,15 +35,9 @@ local function flipCoin()
     local betAmount = tonumber(betText)
     local currentBalance = tonumber(gurt.crumbs.get("balance"))
     
-    -- Validate inputs
-    if betAmount == nil or betAmount - 1 >= currentBalance or betAmount <= 0 then
+    -- Validate inputs - only check for valid bet amount, allow negative balance
+    if betAmount == nil or betAmount <= 0 then
         result.text = "Enter a valid bet amount"
-        result.style = "text-2xl font-bold text-[#ef4444] mb-8"
-        return
-    end
-    
-    if currentBalance - 1 <= betAmount then
-        result.text = "Not enough balance"
         result.style = "text-2xl font-bold text-[#ef4444] mb-8"
         return
     end

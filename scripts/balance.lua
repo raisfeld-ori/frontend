@@ -44,8 +44,8 @@ function updateBalance(newBalance)
         value = newBalance
     })
     
-    -- Play no money sound effect when balance reaches 0
-    if newBalance <= 0 then
+    -- Play no money sound effect when balance goes deeply negative (below -500)
+    if newBalance <= -500 then
         local noMoneyAudio = gurt.select('#no-money-audio')
         if noMoneyAudio then
             noMoneyAudio:play()

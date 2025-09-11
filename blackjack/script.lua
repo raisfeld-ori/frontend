@@ -126,11 +126,7 @@ local function dealCards()
     currentBet = 50
     
     local balance = tonumber(gurt.crumbs.get("balance"))
-    if currentBet > balance then
-        updateGameStatus("Insufficient balance!")
-        return
-    end
-    
+    -- Allow gambling even with insufficient balance (go into debt)
     
     initializeDeck()
     playerCards = {}

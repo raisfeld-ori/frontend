@@ -34,13 +34,8 @@ local function rollDice()
         return
     end
 
-    -- Check if user has enough balance for the bet
+    -- Allow gambling even with insufficient balance (go into debt)
     local balance = tonumber(gurt.crumbs.get("balance"))
-    if balance < 50 then
-        result.text = "Insufficient balance! You need at least 50 chips to play."
-        result.style = "text-2xl font-bold text-[#ef4444] mb-8 text-center"
-        return
-    end
     
     isRolling = true
     rollButton.text = "Rolling..."

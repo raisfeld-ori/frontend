@@ -280,21 +280,13 @@ local function spinRoulette()
         return
     end
     
-    if currentBalance < betAmount then
-        result.text = "Not enough balance"
-        return
-    end
+    -- Allow gambling even with insufficient balance (go into debt)
     
     local totalBets = #selectedNumbers + #selectedColors + #selectedTypes
     local totalBetAmount = betAmount * totalBets
     
     if totalBets == 0 then
         result.text = "Select at least one bet"
-        return
-    end
-    
-    if currentBalance < totalBetAmount then
-        result.text = "Not enough balance for all bets"
         return
     end
     

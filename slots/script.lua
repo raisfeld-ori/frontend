@@ -119,12 +119,7 @@ local function spinSlots()
         return
     end
     
-    -- Check if player has enough balance
-    if currentBalance < betAmount then
-        result.text = "Not enough balance"
-        result.style = "text-2xl font-bold text-[#ef4444] mb-6 min-h-[2rem]"
-        return
-    end
+    -- Allow gambling even with insufficient balance (go into debt)
     
     -- Start spinning
     isSpinning = true
