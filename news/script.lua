@@ -79,8 +79,92 @@ local function createNewsArticle(article)
     
     -- Create main article container
     local articleDiv = gurt.create('div', {
-        style = 'bg-[#1a1a1a] p-6 rounded-lg border border-[#333333] hover:border-[#555555] transition-colors mb-6 shadow-lg'
+        style = 'bg-[#1a1a1a] p-6 rounded-lg border border-[#333333] hover:border-[#555555] transition-colors mb-6 shadow-lg position-relative'
     })
+
+    -- Title at the top of the news site
+    local titleH2 = gurt.create('h2', {
+        text = "Live reaction:",
+        style = 'text-xl font-bold text-white mb-2'
+    })
+    articleDiv:append(titleH2)
+
+    -- Create reaction canvas for this article
+    local reactionCanvas = gurt.create('canvas', {
+        style = 'position-absolute top-2 right-2 pointer-events-none z-10'
+    })
+    reactionCanvas:setAttribute('width', '80')
+    reactionCanvas:setAttribute('height', '80')
+    
+    -- Initialize canvas and draw reaction
+    local ctx = reactionCanvas:withContext('2d')
+    local reactionTypes = {'heart', 'fire', 'thumbsup', 'star', 'lightning'}
+    local reactionType = reactionTypes[math.random(1, #reactionTypes)]
+    
+    -- Draw the reaction
+    ctx:save()
+    ctx:translate(40, 40) -- Center of canvas
+    
+    if reactionType == 'heart' then
+        ctx:setFillStyle('rgba(255, 100, 100, 0.8)')
+        ctx:beginPath()
+        ctx:moveTo(0, 5)
+        ctx:bezierCurveTo(-10, -5, -20, 0, 0, 15)
+        ctx:bezierCurveTo(20, 0, 10, -5, 0, 5)
+        ctx:fill()
+        
+    elseif reactionType == 'fire' then
+        ctx:setFillStyle('rgba(255, 150, 0, 0.8)')
+        ctx:beginPath()
+        ctx:moveTo(0, 15)
+        ctx:quadraticCurveTo(-8, 10, -5, 0)
+        ctx:quadraticCurveTo(-2, -10, 0, -15)
+        ctx:quadraticCurveTo(2, -10, 5, 0)
+        ctx:quadraticCurveTo(8, 10, 0, 15)
+        ctx:fill()
+        
+    elseif reactionType == 'thumbsup' then
+        ctx:setFillStyle('rgba(100, 200, 255, 0.8)')
+        ctx:fillRect(-5, 0, 10, 15)
+        ctx:fillRect(-8, 15, 16, 8)
+        
+    elseif reactionType == 'star' then
+        ctx:setFillStyle('rgba(255, 220, 0, 0.8)')
+        ctx:beginPath()
+        for i = 0, 4 do
+            local angle = (i * 2 * math.pi) / 5 - math.pi / 2
+            local x_star = math.cos(angle) * 12
+            local y_star = math.sin(angle) * 12
+            if i == 0 then
+                ctx:moveTo(x_star, y_star)
+            else
+                ctx:lineTo(x_star, y_star)
+            end
+            angle = angle + math.pi / 5
+            x_star = math.cos(angle) * 6
+            y_star = math.sin(angle) * 6
+            ctx:lineTo(x_star, y_star)
+        end
+        ctx:closePath()
+        ctx:fill()
+        
+    elseif reactionType == 'lightning' then
+        ctx:setFillStyle('rgba(255, 255, 100, 0.8)')
+        ctx:beginPath()
+        ctx:moveTo(0, -15)
+        ctx:lineTo(-5, -5)
+        ctx:lineTo(2, -5)
+        ctx:lineTo(-3, 15)
+        ctx:lineTo(5, 5)
+        ctx:lineTo(-2, 5)
+        ctx:closePath()
+        ctx:fill()
+    end
+    
+    ctx:restore()
+    
+    -- Add canvas to article
+    articleDiv:append(reactionCanvas)
     
     -- Create header section
     local headerDiv = gurt.create('div', {
