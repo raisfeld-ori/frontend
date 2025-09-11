@@ -9,6 +9,7 @@ local currentBet = 0
 local gamesWon = 0
 local gamesLost = 0
 local totalGames = 0
+local gameStarted = false
 
 -- Card values and suits
 local suits = {"♠", "♥", "♦", "♣"}
@@ -25,7 +26,6 @@ local betAmountEl = gurt.select('#bet-amount')
 local dealButton = gurt.select('#deal-button')
 local hitButton = gurt.select('#hit-button')
 local standButton = gurt.select('#stand-button')
-local newGameButton = gurt.select('#new-game-button')
 local gamesWonEl = gurt.select('#games-won')
 local gamesLostEl = gurt.select('#games-lost')
 local totalGamesEl = gurt.select('#total-games')
@@ -120,6 +120,7 @@ local function updateStats()
     totalGamesEl.text = tostring(totalGames)
 end
 
+
 -- Deal initial cards
 local function dealCards()
     currentBet = 50
@@ -156,6 +157,29 @@ local function dealCards()
     end
 end
 
+-- End game function
+local function endGame(playerWon)
+    local balance = tonumber(gurt.crumbs.get("balance"))
+    
+    if playerWon == true then
+        -- Player wins
+        balance = balance + currentBet
+        gamesWon = gamesWon + 1
+    elseif playerWon == false then
+        -- Player loses
+        balance = balance - currentBet
+        gamesLost = gamesLost + 1
+    end
+    -- If tie (nil), no money change
+    
+    totalGames = totalGames + 1
+    
+    -- Update balance with animation
+    updateBalance(balance)
+    
+    updateStats()
+end
+
 -- Stand function
 local function stand()
     if gameState ~= "playing" then return end
@@ -190,29 +214,6 @@ local function stand()
     end
 end
 
--- End game function
-local function endGame(playerWon)
-    local balance = tonumber(gurt.crumbs.get("balance"))
-    
-    if playerWon == true then
-        -- Player wins
-        balance = balance + currentBet
-        gamesWon = gamesWon + 1
-    elseif playerWon == false then
-        -- Player loses
-        balance = balance - currentBet
-        gamesLost = gamesLost + 1
-    end
-    -- If tie (nil), no money change
-    
-    totalGames = totalGames + 1
-    
-    -- Update balance with animation
-    updateBalance(balance)
-    
-    updateStats()
-end
-
 -- Hit function
 local function hit()
     if gameState ~= "playing" then return end
@@ -232,12 +233,19 @@ end
 
 -- New game function
 local function newGame()
+    if gameStarted and gameState ~= "finished" then
+        updateGameStatus("Finish the current game first!")
+        return
+    end
+    
+     -- Reset game state
     gameState = "betting"
     playerCards = {}
     dealerCards = {}
     playerScore = 0
     dealerScore = 0
     currentBet = 0
+    gameStarted = true
     
     playerCardsEl.text = ""
     dealerCardsEl.text = ""
@@ -250,14 +258,12 @@ local function newGame()
     dealButton.style = "display: inline-block; bg-[#7c3aed] text-white px-8 py-3 rounded-lg font-bold cursor-pointer hover:bg-[#8b5cf6] border-none"
     hitButton.style = "display: none"
     standButton.style = "display: none"
-    newGameButton.style = "display: none"
 end
 
 -- Event listeners
 dealButton:on('click', dealCards)
 hitButton:on('click', hit)
 standButton:on('click', stand)
-newGameButton:on('click', newGame)
 
 -- Initialize random seed and game
 math.randomseed(Time.now())

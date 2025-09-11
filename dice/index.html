@@ -32,6 +32,7 @@
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-regex">regex</span>
                 <span style="text-white cursor-pointer mx-4 hover:text-[#7c3aed] no-underline" id="nav-dice">Dice</span>
                 <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-coinflip">CoinFlip</span>
+                <span style="text-[#888888] cursor-pointer mx-4 hover:text-white no-underline" id="nav-news">Live News</span>
             </div>
             
             <!-- Gurt Wallet Balance (Far Right) -->
@@ -67,13 +68,13 @@
             </div>
             
             <!-- Input and Roll Section -->
-                <div id="origin-container" style="flex flex-col gap-2">
-                    <p id="origin-text" style="block text-sm font-medium text-[#f8f8f8]">Pick a number (1-6)</p>
-                    <input id="origin" type="number" style="text-[#f8f8f8]" placeholder="Enter 1-6" min="1" max="6" />
+                <div id="origin-container" style="flex flex-col gap-2 mx-auto mb-10">
+                    <p id="origin-text" style="block  text-sm font-medium text-[#f8f8f8]">Pick a number (1-6)</p>
+                    <input id="origin" type="number" style="mx-auto border-[#ffffff] py-3 px-6 w-[200px] text-[#f8f8f8]" placeholder="Enter 1-6" min="1" max="6" />
                 </div>
                 
                 <!-- Roll Button -->
-                <button id="roll-button" style="bg-[#7c3aed] text-white px-12 py-6 rounded-xl text-2xl font-bold cursor-pointer hover:bg-[#8b5cf6] border-none">
+                <button id="roll-button" style="bg-[#7c3aed] mx-auto text-white px-12 py-6 rounded-xl text-2xl font-bold cursor-pointer hover:bg-[#8b5cf6] border-none">
                     Roll Dice
                 </button>
             </div>
@@ -82,7 +83,7 @@
             <div id="result" style="text-2xl font-bold text-white mb-12 min-h-[3rem] text-center"></div>
             
             <!-- Stats Grid -->
-            <div style="max-w-3xl mx-auto mb-12 text-center overflow-hidden">
+            <div style="max-w-3xl flex mx-auto mb-12 text-center overflow-hidden">
                 <div style="bg-[#1a1a1a] border border-[#333333] rounded-xl p-6 text-center m-2 w-[170px] float-left">
                     <div style="text-3xl font-bold text-[#10b981] mb-2" id="wins-count">0</div>
                     <div style="text-[#888888] text-lg">Wins</div>
