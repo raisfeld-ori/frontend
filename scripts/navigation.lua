@@ -15,4 +15,6 @@ navRoulette:on('click', function() gurt.location.goto('/roulette') end)
 navregex:on('click', function() gurt.location.goto('/regex') end)
 navDice:on('click', function() gurt.location.goto('/dice') end)
 navCoinflip:on('click', function() gurt.location.goto('/coinflip') end)
-navNews:on('click', function() gurt.location.goto('/news') end)
+if navNews then
+    navNews:on('click', function() gurt.location.goto('/news') end)
+end
